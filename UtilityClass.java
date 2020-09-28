@@ -10,76 +10,132 @@ import java.util.regex.Pattern;
 //beginning of class
 public class UtilityClass {
 
-	String passwordHashed;
+	byte[] passwordHashed;
+	byte[] salt;
 
 	// this method is for new user registration
-	public static boolean createUser(String username, String password) {
+	public boolean createUser(String username, String password) {
 		boolean newUserCreated = false;
-		//process is little different then existing user
-		if(newUserCreated == true) {
-			//need to apply salt and hash properly and return result of hash for db storage
+		// check username and check password for valid credentials allowed by system
+		newUserCreated = newUserValidation(username, password);
+
+		if (newUserCreated == true) {
+			// need to apply salt and hash properly and store result of hash for db storage
+			passwordHashingForNewAccount(password);
 		}
-		
+
 		return newUserCreated;
 	}
 
-	// this method is for checking user credentials against stored in db
-	public final boolean userCredentialValidation(String username, String password, String dbPassword) {
+	// this method is for new username and new password to be checked and password
+	// to be hashed
+	public final boolean newUserValidation(String username, String password) {
 		boolean validationOutcome = false;
 		validationOutcome = usernameValidation(username);
 		System.out.println("username valid: " + validationOutcome);
-		if(validationOutcome == true) {
+		if (validationOutcome == true) {
 			validationOutcome = passwordValidation(password);
 			System.out.println("password valid: " + validationOutcome);
 		}
-		if(validationOutcome == true) {
-			//apply salt to user provided password and compare against
-			passwordSalt(password);
+		if (validationOutcome == true) {
+			// apply salt to user provided password and compare against
+			passwordHashingForNewAccount(password);
 		}
-		
 
 		return validationOutcome;
 
 	}
 
-	// This method takes the password and adds the salt before running the hash
-	private final void passwordSalt(String password) {
-		
-		//digest for hash computation for SHA-256
+	
+
+	//This method is for new user account process
+	private void passwordHashingForNewAccount(String password) {
+		// digest for hash computation for SHA-256
 		MessageDigest md;
-		
+
 		try {
-			md = MessageDigest.getInstance("SHA-256");//set algorithm
-			
-			//generate salt
+			md = MessageDigest.getInstance("SHA-256");// set algorithm
+
+			// generate salt
 			SecureRandom random = new SecureRandom();
 			byte[] salt = new byte[16];
 			random.nextBytes(salt);
-			
-			
-			//pass salt to digest
+			System.out.println("this is the salt: " + salt);
+
+			// pass salt to digest
 			md.update(salt);
-			
-			//make the salted hash
+
+			// make the salted hash
 			byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
 
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hashedPassword)
-                sb.append(String.format("%02x", b));
+			StringBuilder sb = new StringBuilder();
+			for (byte b : hashedPassword)
+				sb.append(String.format("%02x", b));
 
-            System.out.println(sb);
-            passwordHashed = sb.toString();
-			
-		} catch (NoSuchAlgorithmException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-		
+			System.out.println(sb);
 
-		
+			setSalt(salt);
+			setHashedPassword(hashedPassword);
 
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	// This method takes the password and adds the salt before running the hash
+	public final void passwordHashingForExistingUser(String password, byte[] salt) {
+
+		// digest for hash computation for SHA-256
+		MessageDigest md;
+
+		try {
+			md = MessageDigest.getInstance("SHA-256");// set algorithm
+
+			// pass salt to digest
+			md.update(salt);
+
+			// make the salted hash
+			byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
+
+			StringBuilder sb = new StringBuilder();
+			for (byte b : hashedPassword)
+				sb.append(String.format("%02x", b));
+
+			System.out.println(sb);
+
+			setSalt(salt);
+			setHashedPassword(hashedPassword);
+
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
+		
+	}
+
+	// set the password after being hashed for later access
+	private void setHashedPassword(byte[] hashedPassword) {
+		passwordHashed = hashedPassword;
+
+	}
+
+	// this is used to access hashed password after passwordingHashing() was called
+	public byte[] gethashedPassword() {
+		return passwordHashed;
+	}
+
+	// this sets the salt for later access
+	private void setSalt(byte[] salt2) {
+		salt = salt2;
+
+	}
+
+	// this allows for salt to be collected and stored in database
+	public byte[] getSalt() {
+		return salt;
 	}
 
 	// This method is to validate username character requirements from input field
@@ -161,8 +217,6 @@ public class UtilityClass {
 			}
 
 		}
-		
-		
 
 		return validationOutcome;
 	}
@@ -172,22 +226,22 @@ public class UtilityClass {
 		// regex pattern checker will be utilized for this task
 		// List<> is utilized for iteration of username
 		boolean validationCheck = false;
-		//final String regex = "[.\\\\'\\\\\"\\\\?\\\\/\\\\,\\\\.\\\\`\\\\~\\\\*\\\\%\\\\\\\\|+\\s]";//black listed for non approved characters
+
+		// listed for non approved characters
 		final String regex = "^[a-zA-Z0-9!@$()\\-`.+,]*$";
-		//regex		
+		// regex
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(password);
-		
-		
-			System.out.println("after matcher " + matcher.matches());
-			//if pattern is found then we return false for found invalid character(s)
-			if (matcher.matches() == true) {
-				System.out.println("in if of matcher: "+ matcher.matches());
-				validationCheck = true;//
-			} else {
-				System.out.println("in if else of matcher: "+ matcher.matches());
-				validationCheck = false;
-			}
+
+		System.out.println("after matcher " + matcher.matches());
+		// if pattern is found then we return false for found invalid character(s)
+		if (matcher.matches() == true) {
+			System.out.println("in if of matcher: " + matcher.matches());
+			validationCheck = true;//
+		} else {
+			System.out.println("in if else of matcher: " + matcher.matches());
+			validationCheck = false;
+		}
 
 		return validationCheck;
 	}
