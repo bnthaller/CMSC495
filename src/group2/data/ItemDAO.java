@@ -22,7 +22,7 @@ public class ItemDAO extends DBConnection {
         LocalDate today = java.time.LocalDate.now();
         
         StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT id, name, quantity, expiryDate, productType, userId FROM items WHERE userId = ?");
+        getItemsByUserIdQuery.append("SELECT id, name, quantity, expiration, productType, userId FROM pantry WHERE userId = ?");
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
@@ -60,7 +60,7 @@ public class ItemDAO extends DBConnection {
     
     public void createItem(String name, int quantity, LocalDate expiryDate, String productType, int userId) {        
         StringBuilder createItemQuery = new StringBuilder();
-        createItemQuery.append("INSERT INTO items(name, quantity, expiryDate, productType, userId) ");
+        createItemQuery.append("INSERT INTO pantry(name, quantity, expiration, productType, userId) ");
         createItemQuery.append("VALUES (?, ?, ?, ?, ?)");
         
         try {
@@ -79,7 +79,7 @@ public class ItemDAO extends DBConnection {
     
     public void updateItemById(int itemId, String name, int quantity, String productType, LocalDate expiryDate) {        
         StringBuilder updateItemByIdQuery = new StringBuilder();
-        updateItemByIdQuery.append("UPDATE items SET name = ?, quantity = ?, productType = ?, expiryDate = ? WHERE id = ?");
+        updateItemByIdQuery.append("UPDATE pantry SET name = ?, quantity = ?, productType = ?, expiration = ? WHERE id = ?");
         
         try {
             PreparedStatement updateItemByIdStatement = conn.prepareStatement(updateItemByIdQuery.toString());
@@ -97,7 +97,7 @@ public class ItemDAO extends DBConnection {
     
     public void deleteItemById(int itemId) {
         StringBuilder deleteItemByIdQuery = new StringBuilder();
-        deleteItemByIdQuery.append("DELETE FROM items WHERE id = ?");
+        deleteItemByIdQuery.append("DELETE FROM pantry WHERE id = ?");
         
         try {
             PreparedStatement deleteItemByIdStatement = conn.prepareStatement(deleteItemByIdQuery.toString());

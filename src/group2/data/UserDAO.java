@@ -17,7 +17,7 @@ public class UserDAO extends DBConnection {
         int userId = 0;
         
         StringBuilder createUserQuery = new StringBuilder();
-        createUserQuery.append("INSERT INTO users(email, firstName, lastName, password) ");
+        createUserQuery.append("INSERT INTO user(email, firstName, lastName, password) ");
         createUserQuery.append("VALUES (?, ?, ?, ?)");
         
         try {
@@ -39,7 +39,7 @@ public class UserDAO extends DBConnection {
         User user = new User();
         
         StringBuilder getUserByIdQuery = new StringBuilder();
-        getUserByIdQuery.append("SELECT id, username, firstName, lastName, password, expiryLength FROM Users WHERE id = ?");
+        getUserByIdQuery.append("SELECT id, username, firstName, lastName, password, expiryLength FROM User WHERE id = ?");
         
         try {
             PreparedStatement getUserByIdStatement = conn.prepareStatement(getUserByIdQuery.toString());
@@ -66,7 +66,7 @@ public class UserDAO extends DBConnection {
     
     public void updateUserById(int userId, String username, String firstName, String lastName, String password, int expiryLength) {        
         StringBuilder updateUserByIdQuery = new StringBuilder();
-        updateUserByIdQuery.append("UPDATE users SET firstName = ?, lastName = ?, password = ?, expiryLength = ? WHERE id = ?");
+        updateUserByIdQuery.append("UPDATE user SET firstName = ?, lastName = ?, password = ?, expiryLength = ? WHERE id = ?");
         
         try {
             PreparedStatement updateUserByIdStatement = conn.prepareStatement(updateUserByIdQuery.toString());
@@ -86,7 +86,7 @@ public class UserDAO extends DBConnection {
         int userId = 0;
         
         StringBuilder verifyUserQuery = new StringBuilder();
-        verifyUserQuery.append("SELECT id from users WHERE username = ? AND password = ?");
+        verifyUserQuery.append("SELECT id from user WHERE username = ? AND password = ?");
         
         try {
             PreparedStatement verifyUserStatement = conn.prepareStatement(verifyUserQuery.toString());
