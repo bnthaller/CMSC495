@@ -24,12 +24,10 @@ import javax.swing.JScrollPane;
 
 public class TopShelfGui extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -8617864607802138782L;
-	private Connection sqlConn = null;
+//	private Connection sqlConn = null;
 	private boolean isLogOut = false;
 	private JTable table;
 	
-	@SuppressWarnings("unused")
-	private UserData userData = null;
 
 	public TopShelfGui(JFrame parent, Connection sqlConn) {
 		super(parent, "Top Shelf", true);
@@ -116,11 +114,7 @@ public class TopShelfGui extends JDialog implements ActionListener {
 		this.setLocation((int) ((dimension.getWidth() - getWidth()) / 2), 
 				(int) ((dimension.getHeight() - getHeight()) / 2));
 		
-		this.sqlConn = sqlConn;
-	}
-	
-	public void createSubsystems() {
-		userData = new UserData(sqlConn);
+//		this.sqlConn = sqlConn;
 	}
 	
 	public void actionPerformed(ActionEvent e) {

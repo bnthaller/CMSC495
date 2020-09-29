@@ -11,13 +11,13 @@ public class UserService {
     
     UserDAO userDAO = new UserDAO();
     
-    public User createUser(String username, String firstName, String lastName, String password) {
+    public User createUser(String username, String firstName, String lastName, String password, int expiryLength) {
     	if (!Utility.isUserValid(username, password)) {
     		return new User();
     	}
     	
 		try {
-			int userId = userDAO.createUser(username, firstName, lastName, Utility.hashPassword(password));
+			int userId = userDAO.createUser(username, firstName, lastName, Utility.hashPassword(password), expiryLength);
 			return userDAO.getUserById(userId);
     	} catch (NoSuchAlgorithmException ex) {
     		return new User();
@@ -43,7 +43,8 @@ public class UserService {
     	try {
 			password = Utility.hashPassword(password);
 		} catch (NoSuchAlgorithmException e) {
-			return new User();
+//			return new User();
+			return null;
 		}
     	
         int userId = userDAO.verifyUser(email, password);
@@ -54,7 +55,8 @@ public class UserService {
             return verifiedUser;
         }
         
-        return new User();
+//        return new User();
+		return null;
     }
     
 }

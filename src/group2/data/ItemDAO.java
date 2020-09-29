@@ -1,5 +1,6 @@
 package group2.data;
 
+import group2.Application;
 import group2.model.Item;
 import static group2.model.ItemStatus.*;
 import java.util.logging.Level;
@@ -9,10 +10,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemDAO extends DBConnection {
-    
+public class ItemDAO /*extends DBConnection*/ {
+    Connection conn = null;
     ResultSet resultSet;
     
+    public ItemDAO() {
+    	this.conn = Application.sqlConn;
+    }
     private void clearResultSet() {
         resultSet = null;
     }

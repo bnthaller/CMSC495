@@ -1,24 +1,29 @@
 package group2.data;
 
+import group2.Application;
 import group2.model.User;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserDAO extends DBConnection {
-    
+public class UserDAO /*extends DBConnection*/ {
+    Connection conn = null;
     ResultSet resultSet;
+    
+    public UserDAO() {
+    	this.conn = Application.sqlConn;
+    }
     
     private void clearResultSet() {
         resultSet = null;
     }
         
-    public int createUser(String username, String firstName, String lastName, String password) {
+    public int createUser(String username, String firstName, String lastName, String password, int expiryLength) {
         int userId = 0;
         
         StringBuilder createUserQuery = new StringBuilder();
-        createUserQuery.append("INSERT INTO user(email, firstName, lastName, password) ");
-        createUserQuery.append("VALUES (?, ?, ?, ?)");
+        createUserQuery.append("INSERT INTO user(username, firstName, lastName, password, expiry_length) ");
+        createUserQuery.append("VALUES (?, ?, ?, ?, ?)");
         
         try {
             PreparedStatement createUserStatement = conn.prepareStatement(createUserQuery.toString(), Statement.RETURN_GENERATED_KEYS);
@@ -26,6 +31,7 @@ public class UserDAO extends DBConnection {
             createUserStatement.setString(2, firstName);
             createUserStatement.setString(3, lastName);
             createUserStatement.setString(4, password);
+            createUserStatement.setInt(5, expiryLength);
             
             userId = createUserStatement.executeUpdate();
         } catch (SQLException ex) {
@@ -39,7 +45,7 @@ public class UserDAO extends DBConnection {
         User user = new User();
         
         StringBuilder getUserByIdQuery = new StringBuilder();
-        getUserByIdQuery.append("SELECT id, username, firstName, lastName, password, expiryLength FROM User WHERE id = ?");
+        getUserByIdQuery.append("SELECT user_id, username, firstName, lastName, password, expiry_length FROM User WHERE user_id = ?");
         
         try {
             PreparedStatement getUserByIdStatement = conn.prepareStatement(getUserByIdQuery.toString());
@@ -66,7 +72,7 @@ public class UserDAO extends DBConnection {
     
     public void updateUserById(int userId, String username, String firstName, String lastName, String password, int expiryLength) {        
         StringBuilder updateUserByIdQuery = new StringBuilder();
-        updateUserByIdQuery.append("UPDATE user SET firstName = ?, lastName = ?, password = ?, expiryLength = ? WHERE id = ?");
+        updateUserByIdQuery.append("UPDATE user SET firstName = ?, lastName = ?, password = ?, expiry_length = ? WHERE id = ?");
         
         try {
             PreparedStatement updateUserByIdStatement = conn.prepareStatement(updateUserByIdQuery.toString());
@@ -86,7 +92,7 @@ public class UserDAO extends DBConnection {
         int userId = 0;
         
         StringBuilder verifyUserQuery = new StringBuilder();
-        verifyUserQuery.append("SELECT id from user WHERE username = ? AND password = ?");
+        verifyUserQuery.append("SELECT user_id from user WHERE username = ? AND password = ?");
         
         try {
             PreparedStatement verifyUserStatement = conn.prepareStatement(verifyUserQuery.toString());
