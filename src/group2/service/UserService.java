@@ -1,7 +1,10 @@
 package group2.service;
 
+import java.security.NoSuchAlgorithmException;
+
 import group2.data.UserDAO;
 import group2.model.UserStatus;
+import group2.utility.Utility;
 import group2.model.User;
 
 public class UserService {
@@ -9,8 +12,16 @@ public class UserService {
     UserDAO userDAO = new UserDAO();
     
     public User createUser(String username, String firstName, String lastName, String password) {
-        int userId = userDAO.createUser(username, firstName, lastName, password);
-        return userDAO.getUserById(userId);
+    	if (!Utility.isUserValid(username, password)) {
+    		return new User();
+    	}
+    	
+		try {
+			int userId = userDAO.createUser(username, firstName, lastName, Utility.hashPassword(password));
+			return userDAO.getUserById(userId);
+    	} catch (NoSuchAlgorithmException ex) {
+    		return new User();
+    	}
     }
     
     public User getUserById(int userId) {
@@ -18,11 +29,23 @@ public class UserService {
     }
     
     public User updateUser(int userId, String username, String firstName, String lastName, String password, int expiryLength) {
+    	try {
+			password = Utility.hashPassword(password);
+		} catch (NoSuchAlgorithmException e) {
+			return new User();
+		}
+    	
         userDAO.updateUserById(userId, username, firstName, lastName, password, expiryLength);
         return getUserById(userId);
     }
     
     public User verifyUser(String email, String password) {
+    	try {
+			password = Utility.hashPassword(password);
+		} catch (NoSuchAlgorithmException e) {
+			return new User();
+		}
+    	
         int userId = userDAO.verifyUser(email, password);
         
         if (userId > 0) {
