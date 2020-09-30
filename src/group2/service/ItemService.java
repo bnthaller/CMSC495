@@ -19,6 +19,13 @@ public class ItemService {
         itemDAO.deleteItemById(itemId);
         return getItemsByUserId(user);
     }
+
+    public List<Item> getItems(User user) {
+        return itemDAO.getItems(user.getExpiryLength());
+    }
+    public Item getItemByItemId(int itemId) {
+        return itemDAO.getItemByItemId(itemId);
+    }
     
     public List<Item> getItemsByUserId(User user) {
         return itemDAO.getItemsByUserId(user.getId(), user.getExpiryLength());

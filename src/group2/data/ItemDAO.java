@@ -21,16 +21,85 @@ public class ItemDAO /*extends DBConnection*/ {
         resultSet = null;
     }
     
+    public List<Item> getItems(int expiryLength) {
+        List<Item> items = new ArrayList<>();
+        LocalDate today = java.time.LocalDate.now();
+        
+        StringBuilder getItemsByUserIdQuery = new StringBuilder();
+        getItemsByUserIdQuery.append("SELECT pantry_id, name, quantity, expiration, product_type_id, user_id FROM pantry");
+        
+        try {
+            PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
+           
+            resultSet = getItemsByUserIdStatement.executeQuery();
+            
+            while (resultSet.next()) {
+                Item item = new Item();
+                item.setId(resultSet.getInt(1));
+                item.setName(resultSet.getString(2));
+                item.setQuantity(resultSet.getInt(3));
+                item.setExpiryDate(resultSet.getDate(4).toLocalDate());
+                item.setProductType(resultSet.getInt(5));
+                item.setUserId(resultSet.getInt(6));
+                
+                if (item.getExpiryDate().isAfter(today)) {
+                    item.setStatus(EXPIRED);
+                } else if (item.getExpiryDate().plusDays(expiryLength).isAfter(today)) {
+                    item.setStatus(EXPIRING);
+                } else {
+                    item.setStatus(VALID);
+                }
+                
+                items.add(item);
+            }
+            
+            clearResultSet();
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return items;
+    }
+    
+    public Item getItemByItemId(int itemId) {
+        StringBuilder getItemsByUserIdQuery = new StringBuilder();
+        getItemsByUserIdQuery.append("SELECT pantry_id, name, quantity, expiration, product_type_id, user_id FROM pantry WHERE pantry_id = ?");
+        
+        try {
+            PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
+            getItemsByUserIdStatement.setInt(1, itemId);
+            
+            resultSet = getItemsByUserIdStatement.executeQuery();
+            Item item = null;
+            if (resultSet.next()) {
+                item = new Item();
+                item.setId(resultSet.getInt(1));
+                item.setName(resultSet.getString(2));
+                item.setQuantity(resultSet.getInt(3));
+                item.setExpiryDate(resultSet.getDate(4).toLocalDate());
+                item.setProductType(resultSet.getInt(5));
+                item.setUserId(resultSet.getInt(6));
+            }
+            
+            clearResultSet();
+            
+            return item;
+        } catch (SQLException ex) {
+            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     public List<Item> getItemsByUserId(int userId, int expiryLength) {
         List<Item> items = new ArrayList<>();
         LocalDate today = java.time.LocalDate.now();
         
         StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT id, name, quantity, expiration, productType, userId FROM pantry WHERE userId = ?");
+        getItemsByUserIdQuery.append("SELECT pantry_id, name, quantity, expiration, product_type_id, user_id FROM pantry");// WHERE userId = ?");
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
-            getItemsByUserIdStatement.setInt(1, userId);
+//            getItemsByUserIdStatement.setInt(1, userId);
             
             resultSet = getItemsByUserIdStatement.executeQuery();
             
@@ -40,7 +109,7 @@ public class ItemDAO /*extends DBConnection*/ {
                 item.setName(resultSet.getString(2));
                 item.setQuantity(resultSet.getInt(3));
                 item.setExpiryDate(resultSet.getDate(4).toLocalDate());
-                item.setProductType(resultSet.getString(5));
+                item.setProductType(resultSet.getInt(5));
                 item.setUserId(resultSet.getInt(6));
                 
                 if (item.getExpiryDate().isAfter(today)) {
@@ -64,7 +133,7 @@ public class ItemDAO /*extends DBConnection*/ {
     
     public void createItem(String name, int quantity, LocalDate expiryDate, String productType, int userId) {        
         StringBuilder createItemQuery = new StringBuilder();
-        createItemQuery.append("INSERT INTO pantry(name, quantity, expiration, productType, userId) ");
+        createItemQuery.append("INSERT INTO pantry(name, quantity, expiration, product_type_id, user_id) ");
         createItemQuery.append("VALUES (?, ?, ?, ?, ?)");
         
         try {
@@ -83,7 +152,7 @@ public class ItemDAO /*extends DBConnection*/ {
     
     public void updateItemById(int itemId, String name, int quantity, String productType, LocalDate expiryDate) {        
         StringBuilder updateItemByIdQuery = new StringBuilder();
-        updateItemByIdQuery.append("UPDATE pantry SET name = ?, quantity = ?, productType = ?, expiration = ? WHERE id = ?");
+        updateItemByIdQuery.append("UPDATE pantry SET name = ?, quantity = ?, product_type_id = ?, expiration = ? WHERE pantry_id = ?");
         
         try {
             PreparedStatement updateItemByIdStatement = conn.prepareStatement(updateItemByIdQuery.toString());
@@ -101,7 +170,7 @@ public class ItemDAO /*extends DBConnection*/ {
     
     public void deleteItemById(int itemId) {
         StringBuilder deleteItemByIdQuery = new StringBuilder();
-        deleteItemByIdQuery.append("DELETE FROM pantry WHERE id = ?");
+        deleteItemByIdQuery.append("DELETE FROM pantry WHERE pantry_id = ?");
         
         try {
             PreparedStatement deleteItemByIdStatement = conn.prepareStatement(deleteItemByIdQuery.toString());

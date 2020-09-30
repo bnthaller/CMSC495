@@ -8,9 +8,12 @@ import group2.utility.Utility;
 import group2.model.User;
 
 public class UserService {
+    private UserDAO userDAO = new UserDAO();
+    public static User currentUser = null;
     
-    UserDAO userDAO = new UserDAO();
-    
+    public UserService() {
+    	currentUser = null;
+    }
     public User createUser(String username, String firstName, String lastName, String password, int expiryLength) {
     	if (!Utility.isUserValid(username, password)) {
     		return new User();
@@ -52,6 +55,7 @@ public class UserService {
         if (userId > 0) {
             User verifiedUser = userDAO.getUserById(userId);
             verifiedUser.setStatus(UserStatus.CONFIRMED);
+            currentUser = verifiedUser;
             return verifiedUser;
         }
         

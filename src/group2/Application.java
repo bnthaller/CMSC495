@@ -34,10 +34,10 @@ public class Application {
 						showLoginScreen = false;
 						
 						System.out.println("Showing login screen... ");
-						boolean loginSuccess = (new Login(rootFrame, "Login", sqlConn).getLoginResponse());
+						boolean loginSuccess = (new Login(rootFrame, "Login").getLoginResponse());
 
 						if(loginSuccess) {
-							TopShelfGui g = new TopShelfGui(rootFrame, sqlConn);
+							TopShelfGui g = new TopShelfGui(rootFrame);
 							g.setVisible(true);
 							
 							if(g.getIsLogOut()) {

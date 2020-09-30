@@ -22,7 +22,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
-import java.sql.Connection;
+//import java.sql.Connection;
 import javax.swing.JRadioButton;
 import group2.model.User;
 import group2.service.UserService;
@@ -44,7 +44,7 @@ public class Login extends JDialog implements ActionListener {
 	private JTextField txtFirstName;
 	private JTextField txtLastName;
 	private JTextField txtExpiryWarning;
-	Connection sqlConn = null;
+//	Connection sqlConn = null;
 	private UserService userService = new UserService();
 
 //	/**
@@ -66,9 +66,9 @@ public class Login extends JDialog implements ActionListener {
 	/**
 	 * Create the application.
 	 */
-	public Login(JFrame parentFrame, String title, Connection sqlConn) {
+	public Login(JFrame parentFrame, String title) {
 		super(parentFrame, title, true);
-		this.sqlConn = sqlConn;
+//		this.sqlConn = sqlConn;
 		initialize();
 		this.setVisible(true);
 	}
