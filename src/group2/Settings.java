@@ -3,7 +3,7 @@ package group2;
 //import javax.swing.JFrame;.
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
@@ -18,7 +18,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+//import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
 public class Settings extends JDialog {
@@ -74,13 +74,13 @@ public class Settings extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				// validate the data entry
 				
-				// update the value through userdata
-				UserData.currentUser.setExpiryWarning(Integer.parseInt(tfExpiryLength.getText()));
-				try {
-					UserData.updateUser();
-				}catch(SQLException ex) {
-					JOptionPane.showMessageDialog(null, ex.getMessage());
-				}
+//				// update the value through userdata
+//				UserData.currentUser.setExpiryWarning(Integer.parseInt(tfExpiryLength.getText()));
+//				try {
+//					UserData.updateUser();
+//				}catch(SQLException ex) {
+//					JOptionPane.showMessageDialog(null, ex.getMessage());
+//				}
 			}
 		});
 		GridBagConstraints gbc_btnOK = new GridBagConstraints();

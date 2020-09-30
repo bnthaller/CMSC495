@@ -8,16 +8,19 @@ import group2.utility.Utility;
 import group2.model.User;
 
 public class UserService {
+    private UserDAO userDAO = new UserDAO();
+    public static User currentUser = null;
     
-    UserDAO userDAO = new UserDAO();
-    
-    public User createUser(String username, String firstName, String lastName, String password) {
+    public UserService() {
+    	currentUser = null;
+    }
+    public User createUser(String username, String firstName, String lastName, String password, int expiryLength) {
     	if (!Utility.isUserValid(username, password)) {
     		return new User();
     	}
     	
 		try {
-			int userId = userDAO.createUser(username, firstName, lastName, Utility.hashPassword(password));
+			int userId = userDAO.createUser(username, firstName, lastName, Utility.hashPassword(password), expiryLength);
 			return userDAO.getUserById(userId);
     	} catch (NoSuchAlgorithmException ex) {
     		return new User();
@@ -43,7 +46,8 @@ public class UserService {
     	try {
 			password = Utility.hashPassword(password);
 		} catch (NoSuchAlgorithmException e) {
-			return new User();
+//			return new User();
+			return null;
 		}
     	
         int userId = userDAO.verifyUser(email, password);
@@ -51,10 +55,12 @@ public class UserService {
         if (userId > 0) {
             User verifiedUser = userDAO.getUserById(userId);
             verifiedUser.setStatus(UserStatus.CONFIRMED);
+            currentUser = verifiedUser;
             return verifiedUser;
         }
         
-        return new User();
+//        return new User();
+		return null;
     }
     
 }

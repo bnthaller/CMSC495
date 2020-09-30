@@ -11,7 +11,7 @@ public class Item {
     private int id;
     private ItemStatus status;
     private int userId;
-    private String productType;
+    private int productTypeId;
    
     public Item() {
     	quantity = 0;
@@ -20,7 +20,7 @@ public class Item {
         id = 0;
         status = EXPIRED;
         userId = 0;
-        productType = "";
+        productTypeId = 0;
     }
     
     public int getQuantity() {
@@ -71,11 +71,11 @@ public class Item {
         this.userId = userId;
     }
     
-    public String getProductType() {
-        return productType;
+    public int getProductType() {
+        return productTypeId;
     }
 
-    public void setProductType(String productType) {
-        this.productType = productType;
+    public void setProductType(int productTypeId) {
+        this.productTypeId = productTypeId;
     }
 }

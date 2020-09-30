@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 public class Application {
 	private static String dbUrl = "jdbc:mysql://localhost/topshelf";
 	private static JFrame rootFrame = null;
+	public static Connection sqlConn = null;
 
 	/**
 	 * Launch the application.
@@ -19,11 +20,11 @@ public class Application {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				Connection sqlConn = null;
+//				Connection sqlConn = null;
 				
 				try {
 					// create the sql connection
-					sqlConn = DriverManager.getConnection(dbUrl, "root", "cmsc495");
+					sqlConn = DriverManager.getConnection(dbUrl, "root", "password");
 					
 					// show the login screen until the user "exits" the application
 					// if the user "logs out", the login screen will be presented again
@@ -33,10 +34,10 @@ public class Application {
 						showLoginScreen = false;
 						
 						System.out.println("Showing login screen... ");
-						boolean loginSuccess = (new Login(rootFrame, "Login", sqlConn).getLoginResponse());
+						boolean loginSuccess = (new Login(rootFrame, "Login").getLoginResponse());
 
 						if(loginSuccess) {
-							TopShelfGui g = new TopShelfGui(rootFrame, sqlConn);
+							TopShelfGui g = new TopShelfGui(rootFrame);
 							g.setVisible(true);
 							
 							if(g.getIsLogOut()) {
