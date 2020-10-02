@@ -2,6 +2,8 @@ package group2.data;
 
 import group2.Application;
 import group2.model.User;
+import group2.model.UserException;
+
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,9 +20,20 @@ public class UserDAO /*extends DBConnection*/ {
         resultSet = null;
     }
         
-    public int createUser(String username, String firstName, String lastName, String password, int expiryLength) {
-        int userId = 0;
-        
+    /**
+     * 
+     * @param username
+     * @param firstName
+     * @param lastName
+     * @param password - This value should already be salted and hashed
+     * @param expiryLength
+     * @return
+     * @throws UserException
+     * 
+     * Creates a new user.
+     * If user is unable to be created, a UserException is thrown.
+     */
+    public int createUser(String username, String firstName, String lastName, String password, int expiryLength) throws UserException {        
         StringBuilder createUserQuery = new StringBuilder();
         createUserQuery.append("INSERT INTO user(username, firstName, lastName, password, expiry_length) ");
         createUserQuery.append("VALUES (?, ?, ?, ?, ?)");
@@ -33,15 +46,22 @@ public class UserDAO /*extends DBConnection*/ {
             createUserStatement.setString(4, password);
             createUserStatement.setInt(5, expiryLength);
             
-            userId = createUserStatement.executeUpdate();
+            return createUserStatement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UserException("Unable to create new user.");
         }
-        
-        return userId;
     }
     
-    public User getUserById(int userId) {
+    /**
+     * 
+     * @param userId
+     * @return
+     * @throws UserException
+     * 
+     * Method get's users information from user table by userId.
+     * If unable to hydrate user, UserException is thrown.
+     */
+    public User getUserById(int userId) throws UserException {
         User user = new User();
         
         StringBuilder getUserByIdQuery = new StringBuilder();
@@ -63,14 +83,27 @@ public class UserDAO /*extends DBConnection*/ {
             }
             
             clearResultSet();
+            
+            return user;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new UserException("Unable to find user.");
         }
-        
-        return user;
     }
     
-    public void updateUserById(int userId, String username, String firstName, String lastName, String password, int expiryLength) {        
+    /**
+     * 
+     * @param userId
+     * @param username
+     * @param firstName
+     * @param lastName
+     * @param password - This value should already be salted and hashed
+     * @param expiryLength
+     * @throws UserException
+     * 
+     * Method updates a users information in the user table.
+     * If update is unsuccessful, a UserException is thrown.
+     */
+    public void updateUserById(int userId, String username, String firstName, String lastName, String password, int expiryLength) throws UserException {        
         StringBuilder updateUserByIdQuery = new StringBuilder();
         updateUserByIdQuery.append("UPDATE user SET firstName = ?, lastName = ?, password = ?, expiry_length = ? WHERE id = ?");
         
@@ -84,12 +117,22 @@ public class UserDAO /*extends DBConnection*/ {
             
             updateUserByIdStatement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new UserException("Unable to update user with provided values.");
         }
     }
     
-    public int verifyUser(String username, String password) {
-        int userId = 0;
+    /**
+     * 
+     * @param username
+     * @param password - This value should already be salted and hashed
+     * @return - userId
+     * @throws UserException
+     * 
+     * Method returns the userId from the user table for the user record with the provided username and password.
+     * If the user is not found, the method will throw a UserException.
+     */
+    public int verifyUser(String username, String password) throws UserException {
+        int userId;
         
         StringBuilder verifyUserQuery = new StringBuilder();
         verifyUserQuery.append("SELECT user_id from user WHERE username = ? AND password = ?");
@@ -103,14 +146,16 @@ public class UserDAO /*extends DBConnection*/ {
             
             if (resultSet.next()) {
                 userId = resultSet.getInt(1);
+            } else {
+            	throw new UserException("Unable to find user with provided username password.");
             }
             
             clearResultSet();
+            
+            return userId;
         } catch (SQLException ex) {
-            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+            throw new UserException("Unable to find user with provided username password.");
         }
-        
-        return userId;
     }
     
 }

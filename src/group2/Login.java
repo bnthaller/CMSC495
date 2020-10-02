@@ -25,6 +25,7 @@ import javax.swing.JPasswordField;
 //import java.sql.Connection;
 import javax.swing.JRadioButton;
 import group2.model.User;
+import group2.model.UserException;
 import group2.service.UserService;
 
 public class Login extends JDialog implements ActionListener {
@@ -248,89 +249,39 @@ public class Login extends JDialog implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == btnOK) {
-			
-			// log in or register?
-			if(rbLogIn.isSelected()) {
-				// call the User service to log in
-				User user = userService.verifyUser(txtUsername.getText(), 
+			try {
+				// log in or register?
+				if(rbLogIn.isSelected()) {
+					// call the User service to log in
+					User user = userService.verifyUser(txtUsername.getText(), 
 						String.copyValueOf(txtPassword.getPassword()));
-				
-				if(user != null)
-				{
-					loginSuccessful = true;
-					this.dispose();
-				}
-				else {
-					JOptionPane.showMessageDialog(this, "Invalid username/password.");
-					loginSuccessful = false;
-				}
-//				loginSuccessful = true;
-//				this.dispose();
-//				try {
-//					if(validateUser(txtUsername.getText(), String.copyValueOf(txtPassword.getPassword()))) {
-//						loginSuccessful = true;
-//						this.dispose();
-//					}
-//					else
-//					{
-//						JOptionPane.showMessageDialog(this, "Invalid username/password.");
-//					}
-//				}		
-//				catch (Exception ex) {
-//					JOptionPane.showMessageDialog(this, ex.getMessage());
-//				}
-			}
-			else if(rbRegister.isSelected()) {
-				// let's pretend everything checks out
-			
-				System.out.print("Creating user... ");
-				User user = userService.createUser(txtUsername.getText(), 
-						txtFirstName.getText(), 
-						txtLastName.getText(),
-						String.copyValueOf(txtPassword.getPassword()), 
-						Integer.parseInt(txtExpiryWarning.getText()));
-				System.out.println("done.");
-				
-				if(user != null) {
-					loginSuccessful = true;
-					this.dispose();
-				}
-			}
 					
+					loginSuccessful = true;
+					this.dispose();
+				}
+				else if(rbRegister.isSelected()) {
+					// let's pretend everything checks out
+				
+					System.out.print("Creating user... ");
+					User user = userService.createUser(txtUsername.getText(), 
+							txtFirstName.getText(), 
+							txtLastName.getText(),
+							String.copyValueOf(txtPassword.getPassword()), 
+							Integer.parseInt(txtExpiryWarning.getText()));
+					System.out.println("done.");
+					
+					loginSuccessful = true;
+					this.dispose();
+				}
+			} catch (UserException ex) {
+				loginSuccessful = false;
+				JOptionPane.showMessageDialog(this, ex.getMessage());
+			}
 		}
 		else if (e.getSource() == btnCancel) {
 			this.dispose();
 		}
 	}
-	
-//	private boolean validateUser(String username, String password) throws Exception{
-//		String url = "jdbc:mysql://localhost/topshelf";
-//
-//		try {
-//			// root/cmsc495 is the user/pass to connect to the database
-////			Connection conn = DriverManager.getConnection(url, "root", "cmsc495");
-//			
-//			// this user/pass is the one to validate against our user table
-//			String query = String.format("SELECT count(*) as 'matches' FROM topshelf.user " 
-//					+ "where username='%s' and password='%s'",
-//					username, password);
-//
-//			Statement statement = sqlConn.createStatement();	
-//			ResultSet results =  statement.executeQuery(query);
-//			
-//			if (results.next()) {
-//				int matches = results.getInt("matches");
-//				if(matches == 1)
-//					return true;
-//				else
-//					return false;
-//			}
-//		}
-//		catch (Exception e) {
-//			throw e;
-//		}
-//		return false;
-//	}
 	
 	public boolean getLoginResponse() {
 		return loginSuccessful;

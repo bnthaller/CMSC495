@@ -2,6 +2,8 @@ package group2.data;
 
 import group2.Application;
 import group2.model.Item;
+import group2.model.ItemException;
+
 import static group2.model.ItemStatus.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,16 +19,28 @@ public class ItemDAO /*extends DBConnection*/ {
     public ItemDAO() {
     	this.conn = Application.sqlConn;
     }
+    
     private void clearResultSet() {
         resultSet = null;
     }
     
-    public List<Item> getItems(int expiryLength) {
+    /**
+     * 
+     * @param expiryLength
+     * @return
+     * @throws ItemException
+     * 
+     * Returns a list of Item objects in the pantry table.
+     * If the retrieval is unsuccessful, throw an ItemException.
+     */
+    public List<Item> getItems(int expiryLength) throws ItemException {
         List<Item> items = new ArrayList<>();
         LocalDate today = java.time.LocalDate.now();
         
         StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT pantry_id, name, quantity, expiration, product_type_id, user_id FROM pantry");
+        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.product_type ");
+        getItemsByUserIdQuery.append("FROM pantry p, product_type pt ");
+        getItemsByUserIdQuery.append("WHERE p.pantry_type_id = pt.pantry_type_id");
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
@@ -39,8 +53,7 @@ public class ItemDAO /*extends DBConnection*/ {
                 item.setName(resultSet.getString(2));
                 item.setQuantity(resultSet.getInt(3));
                 item.setExpiryDate(resultSet.getDate(4).toLocalDate());
-                item.setProductType(resultSet.getInt(5));
-                item.setUserId(resultSet.getInt(6));
+                item.setProductType(resultSet.getString(5));
                 
                 if (item.getExpiryDate().isAfter(today)) {
                     item.setStatus(EXPIRED);
@@ -54,16 +67,27 @@ public class ItemDAO /*extends DBConnection*/ {
             }
             
             clearResultSet();
+            
+            return items;
         } catch (SQLException ex) {
-            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new ItemException("Unable to retrieve Items.");
         }
-        
-        return items;
     }
     
-    public Item getItemByItemId(int itemId) {
+    /**
+     * 
+     * @param itemId
+     * @return
+     * @throws ItemException
+     * 
+     * Returns an Item object by itemId.
+     * If the retrieval is unsuccessful, throw an ItemException.
+     */
+    public Item getItemByItemId(int itemId) throws ItemException {
         StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT pantry_id, name, quantity, expiration, product_type_id, user_id FROM pantry WHERE pantry_id = ?");
+        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.product_type ");
+        getItemsByUserIdQuery.append("FROM pantry p, product_type pt ");
+        getItemsByUserIdQuery.append("WHERE p.product_type_id = pt.product_type_id AND pantry_id = ?");
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
@@ -77,80 +101,60 @@ public class ItemDAO /*extends DBConnection*/ {
                 item.setName(resultSet.getString(2));
                 item.setQuantity(resultSet.getInt(3));
                 item.setExpiryDate(resultSet.getDate(4).toLocalDate());
-                item.setProductType(resultSet.getInt(5));
-                item.setUserId(resultSet.getInt(6));
+                item.setProductType(resultSet.getString(5));
             }
             
             clearResultSet();
             
             return item;
         } catch (SQLException ex) {
-            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new ItemException("Unable to retrieve Item.");
         }
-        return null;
     }
     
-    public List<Item> getItemsByUserId(int userId, int expiryLength) {
-        List<Item> items = new ArrayList<>();
-        LocalDate today = java.time.LocalDate.now();
-        
-        StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT pantry_id, name, quantity, expiration, product_type_id, user_id FROM pantry");// WHERE userId = ?");
-        
-        try {
-            PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
-//            getItemsByUserIdStatement.setInt(1, userId);
-            
-            resultSet = getItemsByUserIdStatement.executeQuery();
-            
-            while (resultSet.next()) {
-                Item item = new Item();
-                item.setId(resultSet.getInt(1));
-                item.setName(resultSet.getString(2));
-                item.setQuantity(resultSet.getInt(3));
-                item.setExpiryDate(resultSet.getDate(4).toLocalDate());
-                item.setProductType(resultSet.getInt(5));
-                item.setUserId(resultSet.getInt(6));
-                
-                if (item.getExpiryDate().isAfter(today)) {
-                    item.setStatus(EXPIRED);
-                } else if (item.getExpiryDate().plusDays(expiryLength).isAfter(today)) {
-                    item.setStatus(EXPIRING);
-                } else {
-                    item.setStatus(VALID);
-                }
-                
-                items.add(item);
-            }
-            
-            clearResultSet();
-        } catch (SQLException ex) {
-            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return items;
-    }
-    
-    public void createItem(String name, int quantity, LocalDate expiryDate, String productType, int userId) {        
+    /**
+     * 
+     * @param name
+     * @param quantity
+     * @param expiryDate
+     * @param productType
+     * @param userId
+     * @throws ItemException
+     * 
+     * Inserts a new record into the pantry table with the provided values.
+     * If the entry is unsuccessful, throw an ItemException.
+     */
+    public void createItem(String name, int quantity, LocalDate expiryDate, String productType, int userId) throws ItemException {        
         StringBuilder createItemQuery = new StringBuilder();
-        createItemQuery.append("INSERT INTO pantry(name, quantity, expiration, product_type_id, user_id) ");
-        createItemQuery.append("VALUES (?, ?, ?, ?, ?)");
-        
+        createItemQuery.append("INSERT INTO pantry(name, quantity, expiration, product_type_id) ");
+        createItemQuery.append("VALUES (?, ?, ?, ?)");
+                
         try {
             PreparedStatement createItemStatement = conn.prepareStatement(createItemQuery.toString(), Statement.RETURN_GENERATED_KEYS);
             createItemStatement.setString(1, name);
             createItemStatement.setInt(2, quantity);
             createItemStatement.setDate(3, Date.valueOf(expiryDate));
-            createItemStatement.setString(4, productType);
-            createItemStatement.setInt(5, userId);
+            createItemStatement.setInt(4, getProductTypeId(productType));
             
             createItemStatement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new ItemException("Unable to create the item.");
         }
     }
     
-    public void updateItemById(int itemId, String name, int quantity, String productType, LocalDate expiryDate) {        
+    /**
+     * 
+     * @param itemId
+     * @param name
+     * @param quantity
+     * @param productType
+     * @param expiryDate
+     * @throws ItemException
+     * 
+     * Updates a pantry item with the provided values.
+     * If the update is unsuccessful, throw an ItemException.
+     */
+    public void updateItemById(int itemId, String name, int quantity, String productType, LocalDate expiryDate) throws ItemException {        
         StringBuilder updateItemByIdQuery = new StringBuilder();
         updateItemByIdQuery.append("UPDATE pantry SET name = ?, quantity = ?, product_type_id = ?, expiration = ? WHERE pantry_id = ?");
         
@@ -158,17 +162,25 @@ public class ItemDAO /*extends DBConnection*/ {
             PreparedStatement updateItemByIdStatement = conn.prepareStatement(updateItemByIdQuery.toString());
             updateItemByIdStatement.setString(1, name);
             updateItemByIdStatement.setInt(2, quantity);
-            updateItemByIdStatement.setString(3, productType);
+            updateItemByIdStatement.setInt(3, getProductTypeId(productType));
             updateItemByIdStatement.setDate(4, Date.valueOf(expiryDate));
             updateItemByIdStatement.setInt(5, itemId);
             
             updateItemByIdStatement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new ItemException("Unable to update the item.");
         }
     }
     
-    public void deleteItemById(int itemId) {
+    /**
+     * 
+     * @param itemId
+     * @throws ItemException
+     * 
+     * Deletes an Item from the item table based on the items id.
+     * If the retrieval is unsuccessful, throw an ItemException.
+     */
+    public void deleteItemById(int itemId) throws ItemException {
         StringBuilder deleteItemByIdQuery = new StringBuilder();
         deleteItemByIdQuery.append("DELETE FROM pantry WHERE pantry_id = ?");
         
@@ -178,8 +190,32 @@ public class ItemDAO /*extends DBConnection*/ {
             
             deleteItemByIdStatement.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(ItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+        	throw new ItemException("Unable to delete the item.");
         }
+    }
+    
+    /**
+     * 
+     * @param productType
+     * @return
+     * @throws ItemException
+     * 
+     * Returns the product type from the product type table based on the id.
+     * If the retrieval is unsuccessful, throw an ItemException.
+     */
+    private int getProductTypeId(String productType) throws ItemException {
+    	StringBuilder getProductTypeIdQuery = new StringBuilder();
+    	getProductTypeIdQuery.append("SELECT pantry_type_id FROM pantry WHERE product_type = ?");
+    	
+    	try {
+    		PreparedStatement getProductTypeIdStatement = conn.prepareStatement(getProductTypeIdQuery.toString());
+    		getProductTypeIdStatement.setString(1, productType);
+    		
+    		resultSet = getProductTypeIdStatement.executeQuery();
+    		return resultSet.getInt(1);
+    	} catch (SQLException ex) {
+    		throw new ItemException("Unable to retrieve Pantry Type.");
+    	}
     }
     
 }

@@ -9,33 +9,87 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import group2.model.UserException;
+
 //beginning of class
 public class Utility {
 	
 	private static final String SALT_VALUE = "SALT";
 	
-	public  final static String saltPassword(String password) {
+	/**
+	 * 
+	 * @param password
+	 * @return
+	 * @throws UserException
+	 * 
+	 * Salts and Hashes a plain text password
+	 * If it is unable to salt and hash the password, it will throw a UserException
+	 */
+	public final static String preparePassword(String password) throws UserException {
+		try {
+			return hashPassword(saltPassword(password));
+		} catch (UserException userException) {
+			throw userException;
+		}
+	}
+	
+	/**
+	 * 
+	 * @param password
+	 * @return
+	 * 
+	 * Salts a password by appending the salt value to the end of the password
+	 */
+	private final static String saltPassword(String password) {
 		return password += SALT_VALUE;
 	}
 	
-	public final static String hashPassword(String password) throws NoSuchAlgorithmException {
-		password = saltPassword(password);
-		
+	/**
+	 * 
+	 * @param password
+	 * @return
+	 * @throws UserException
+	 * 
+	 * Hashes a password
+	 * If unable to hash the password, a UserException is thrown
+	 */
+	private final static String hashPassword(String password) throws UserException {		
 		MessageDigest md;
 		
-		md = MessageDigest.getInstance("SHA-256");
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			throw new UserException("Unable to hash users password.");
+		}
+		
 		byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
 			
 		return new String(hashedPassword, StandardCharsets.UTF_8);
 	}
 
-	public final static boolean isUserValid(String username, String password) {
-		return usernameValidation(username) && passwordValidation(password);
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @throws UserException
+	 * 
+	 * Validates that a username and password match the requirements
+	 * If the username is invalid a UserException with invalid username is thrown
+	 * If the password is invalid a UserException with invalid password is thrown
+	 */
+	public final static void isUserValid(String username, String password) throws UserException {
+		if (!isUsernameValid(username)) {
+			throw new UserException("Invalid username.");
+		}
+		
+		if (!isPasswordValid(password)) {
+			throw new UserException("Invalid password");
+		}
 	}
-
+	
 	// This method is to validate username character requirements from input field
 	// at login
-	public final static boolean usernameValidation(String username) {
+	public final static boolean isUsernameValid(String username) {
 		boolean validationOutcome = false;
 		int charCount = 0;
 
@@ -89,7 +143,7 @@ public class Utility {
 
 	// This method is to validate password character requirements from input field
 	// at login
-	public static boolean passwordValidation(String password) {
+	public static boolean isPasswordValid(String password) {
 		boolean validationOutcome = false;
 		int charCount = 0;
 

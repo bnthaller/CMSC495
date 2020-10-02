@@ -10,8 +10,7 @@ public class Item {
     private LocalDate expiryDate;
     private int id;
     private ItemStatus status;
-    private int userId;
-    private int productTypeId;
+    private String productType;
    
     public Item() {
     	quantity = 0;
@@ -19,8 +18,7 @@ public class Item {
         expiryDate = java.time.LocalDate.now();
         id = 0;
         status = EXPIRED;
-        userId = 0;
-        productTypeId = 0;
+        productType = "";
     }
     
     public int getQuantity() {
@@ -62,20 +60,12 @@ public class Item {
     public void setStatus(ItemStatus status) {
         this.status = status;
     }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
     
-    public int getProductType() {
-        return productTypeId;
+    public String getProductType() {
+        return productType;
     }
 
-    public void setProductType(int productTypeId) {
-        this.productTypeId = productTypeId;
+    public void setProductType(String productType) {
+        this.productType = productType;
     }
 }

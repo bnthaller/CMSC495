@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import group2.model.Item;
+import group2.model.ItemException;
 import group2.service.ItemService;
 import group2.service.UserService;
 //import javafx.util.converter.DateTimeStringConverter;
@@ -14,6 +15,8 @@ import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
@@ -152,22 +155,26 @@ public class PantryItem  extends JDialog{
 	}
 	
 	private void doOK() {
-		if(item == null) {
-			// try to add the item
-			itemService.createItem(txtName.getText(), Integer.parseInt(txtQuantity.getText()),
-					LocalDate.parse(txtExpirationDate.getText()), 
-					txtProductType.getText(), UserService.currentUser);
-			result = true;
-			dispose();
-		}
-		else {
-			System.out.print("Updating... ");
-			// try to update the item
-			itemService.updateItemById(item.getId(), txtName.getText(), Integer.parseInt(txtQuantity.getText()), 
-					txtProductType.getText(), LocalDate.parse(txtExpirationDate.getText()), UserService.currentUser);
-			System.out.println("done.");
-			result = true;
-			dispose();
+		try {
+			if(item == null) {
+				// try to add the item
+				itemService.createItem(txtName.getText(), Integer.parseInt(txtQuantity.getText()),
+						LocalDate.parse(txtExpirationDate.getText()), 
+						txtProductType.getText(), UserService.currentUser);
+				result = true;
+				dispose();
+			}
+			else {
+				System.out.print("Updating... ");
+				// try to update the item
+				itemService.updateItemById(item.getId(), txtName.getText(), Integer.parseInt(txtQuantity.getText()), 
+						txtProductType.getText(), LocalDate.parse(txtExpirationDate.getText()), UserService.currentUser);
+				System.out.println("done.");
+				result = true;
+				dispose();
+			}
+		} catch (ItemException ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage());
 		}
 	}
 
