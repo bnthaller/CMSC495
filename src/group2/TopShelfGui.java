@@ -7,6 +7,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JSplitPane;
@@ -15,13 +17,20 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import javax.swing.JTable;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
+//import javax.swing.event.TableModelEvent;
+//import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+//import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 //import group2.data.UserDAO;
 import group2.model.Item;
@@ -51,7 +60,8 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	JButton btnUpdateItem;
 	ItemService itemService = new ItemService();
 	ItemTableModel itemTableModel = new ItemTableModel();
-	
+	TableRowSorter<TableModel> sorter = null;
+	List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);	
 
 	public TopShelfGui(JFrame parent) {
 		super(parent, "Top Shelf", true);
@@ -102,7 +112,10 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 //				
 //		};
 //		table = new JTable(null, columns);
+		
 		table = new JTable(itemTableModel);
+//		TableColumnModel colModel = table.getColumnModel();
+//		colModel.addColumn(new TableColumn);
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				int selected = table.getSelectedRow();
@@ -164,18 +177,20 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		btnDeleteItem = new JButton("Delete Item");
 		btnDeleteItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int selected = table.getSelectedRow();
-				int id = (int)table.getValueAt(selected, 0);
-				System.out.println(selected);
-				
+				int[] selected = table.getSelectedRows();
+
 				try {
-					itemService.deleteItemById(id, UserService.currentUser);
-					refreshData();
+					for(int s : selected) {
+						int id = (int)table.getValueAt(s, 0);
+						System.out.println(selected);
+						
+							itemService.deleteItemById(id, UserService.currentUser);
+						
+					}
 				} catch (ItemException ex) {
 					JOptionPane.showMessageDialog(parent, ex.getMessage());
 				}
-//				if(dlg.getResult())
-//					refreshData();
+				refreshData();
 			}
 		});
 		setButtonState(btnDeleteItem, false);
@@ -194,9 +209,21 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		
 		JLabel lblSortBy = new JLabel("Sort By:", SwingConstants.LEFT);
 		panel_1.add(lblSortBy);
+
+		sorter = new TableRowSorter<TableModel>(itemTableModel);
+		table.setRowSorter(sorter);
 		
 		JComboBox<String> cbSortBy = new JComboBox<String>();
+		cbSortBy.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				sortKeys.clear();
+				sortKeys.add(new RowSorter.SortKey(cbSortBy.getSelectedIndex(), SortOrder.ASCENDING));
+				sorter.setSortKeys(sortKeys);
+			}
+		});
+		
 		panel_1.add(cbSortBy);
+		cbSortBy.addItem("ID");
 		cbSortBy.addItem("Name");
 		cbSortBy.addItem("Product Type");
 		cbSortBy.addItem("Quantity");
@@ -235,6 +262,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	
 	private void refreshData() {
 		itemTableModel.getData();
+
 	}
 	
 //    public void tableChanged(TableModelEvent e) {
@@ -258,7 +286,8 @@ class ItemTableModel extends AbstractTableModel {
 	private String[] columnNames = {"ID", "Name", "Product Type", "Quantity", "Expiration Date"};
     private Object[][] data = null;
     private ItemService itemService = new ItemService();
-    
+    Class[] types = { Integer.class, String.class, String.class, Integer.class, LocalDate.class };
+
     public ItemTableModel() {
     	getData();
     }
@@ -267,6 +296,8 @@ class ItemTableModel extends AbstractTableModel {
     }
 
     public int getRowCount() {
+    	if(data == null)
+    		return 0;
         return data.length;
     }
     public String getColumnName(int col) {
@@ -277,6 +308,10 @@ class ItemTableModel extends AbstractTableModel {
         return data[row][col];
     }
     
+    @Override
+    public Class getColumnClass(int columnIndex) {
+    	return this.types[columnIndex];
+    }
     public void getData() {
     	try {
 			List<Item> items =  itemService.getItems(UserService.currentUser);
@@ -290,6 +325,7 @@ class ItemTableModel extends AbstractTableModel {
 	    		data[i][3] = items.get(i).getQuantity();
 	    		data[i][4] = items.get(i).getExpiryDate();
 	    	}
+
 	    	fireTableDataChanged();
     	} catch (ItemException itemException) {
     		//throw itemException;
