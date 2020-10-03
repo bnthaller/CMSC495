@@ -4,6 +4,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -23,6 +25,7 @@ import javax.swing.table.TableModel;
 
 //import group2.data.UserDAO;
 import group2.model.Item;
+import group2.model.ItemException;
 import group2.service.ItemService;
 import group2.service.UserService;
 
@@ -142,12 +145,17 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 
 				int selected = table.getSelectedRow();
 				int id = (int)table.getValueAt(selected, 0);
-				Item selectedItem = itemService.getItemByItemId(id);
-				System.out.println("id " + selectedItem.getId());
-				PantryItem dlg = createPantryItemDialog(selectedItem);
-				dlg.setVisible(true);
-				if(dlg.getResult())
-					refreshData();
+				
+				try {
+					Item selectedItem = itemService.getItemByItemId(id);
+					System.out.println("id " + selectedItem.getId());
+					PantryItem dlg = createPantryItemDialog(selectedItem);
+					dlg.setVisible(true);
+					if(dlg.getResult())
+						refreshData();
+				} catch (ItemException ex) {
+					JOptionPane.showMessageDialog(parent, ex.getMessage());
+				}
 			}
 		});
 		panel_1.add(btnUpdateItem);
@@ -159,8 +167,13 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 				int selected = table.getSelectedRow();
 				int id = (int)table.getValueAt(selected, 0);
 				System.out.println(selected);
-				itemService.deleteItemById(id, UserService.currentUser);
-				refreshData();
+				
+				try {
+					itemService.deleteItemById(id, UserService.currentUser);
+					refreshData();
+				} catch (ItemException ex) {
+					JOptionPane.showMessageDialog(parent, ex.getMessage());
+				}
 //				if(dlg.getResult())
 //					refreshData();
 			}
@@ -265,18 +278,22 @@ class ItemTableModel extends AbstractTableModel {
     }
     
     public void getData() {
-		List<Item> items =  itemService.getItems(UserService.currentUser);
-
-    	data = new Object[items.size()][5];
-    	for(int i = 0; i < items.size(); ++i) {
-    		System.out.println(items.get(i).getName());
-    		data[i][0] = items.get(i).getId();
-    		data[i][1] = items.get(i).getName();
-    		data[i][2] = items.get(i).getProductType();
-    		data[i][3] = items.get(i).getQuantity();
-    		data[i][4] = items.get(i).getExpiryDate();
+    	try {
+			List<Item> items =  itemService.getItems(UserService.currentUser);
+	
+	    	data = new Object[items.size()][5];
+	    	for(int i = 0; i < items.size(); ++i) {
+	    		System.out.println(items.get(i).getName());
+	    		data[i][0] = items.get(i).getId();
+	    		data[i][1] = items.get(i).getName();
+	    		data[i][2] = items.get(i).getProductType();
+	    		data[i][3] = items.get(i).getQuantity();
+	    		data[i][4] = items.get(i).getExpiryDate();
+	    	}
+	    	fireTableDataChanged();
+    	} catch (ItemException ex) {
+    		JOptionPane.showMessageDialog(parent, ex.getMessage());
     	}
-    	fireTableDataChanged();
     }
     
 }

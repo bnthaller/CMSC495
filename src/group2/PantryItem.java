@@ -149,7 +149,7 @@ public class PantryItem  extends JDialog{
 			return;
 		
 		txtName.setText(item.getName());
-		txtProductType.setText(Integer.toString(item.getProductType()));
+		txtProductType.setText(item.getProductType());
 		txtQuantity.setText(Integer.toString(item.getQuantity()));
 		txtExpirationDate.setText(item.getExpiryDate().toString());
 	}

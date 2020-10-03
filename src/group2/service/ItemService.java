@@ -56,4 +56,12 @@ public class ItemService {
         }
     }
     
+    public List<String> getProductTypes() throws ItemException {
+    	try {
+    		return itemDAO.getProductTypes();
+    	} catch (ItemException itemException) {
+        	throw itemException;
+        }
+    }
+    
 }

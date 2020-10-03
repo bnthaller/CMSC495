@@ -218,4 +218,26 @@ public class ItemDAO /*extends DBConnection*/ {
     	}
     }
     
+    public List<String> getProductTypes() throws ItemException {
+    	List<String> productTypes = new ArrayList<>();
+    	
+    	StringBuilder getProductTypesQuery = new StringBuilder();
+    	getProductTypesQuery.append("SELECT product_type FROM product_type");
+    	
+    	try {
+    		PreparedStatement getProductTypeStatement = conn.prepareStatement(getProductTypesQuery.toString());
+    		resultSet = getProductTypeStatement.executeQuery();
+    		
+    		while (resultSet.next()) {
+    			productTypes.add(resultSet.getString(1));
+    		}
+    		
+    		clearResultSet();
+            
+            return productTypes;
+    	} catch (SQLException ex) {
+    		throw new ItemException("Unable to retrieve Product Types.");
+    	}
+    }
+    
 }

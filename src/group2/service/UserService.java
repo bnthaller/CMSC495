@@ -35,7 +35,7 @@ public class UserService {
 	    	Utility.isUserValid(username, password);
 			
 	    	//Create the user and return the new Users userId
-			int userId = userDAO.createUser(username, firstName, lastName, Utility.hashPassword(password), expiryLength);
+			int userId = userDAO.createUser(username, firstName, lastName, Utility.preparePassword(password), expiryLength);
 			
 			//Return the newly created user
 			return userDAO.getUserById(userId);
