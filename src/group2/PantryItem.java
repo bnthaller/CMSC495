@@ -1,7 +1,7 @@
 package group2;
 
+import java.util.List;
 import javax.swing.JDialog;
-//import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -13,6 +13,8 @@ import group2.service.UserService;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
+
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 //import java.util.Date;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
 
 public class PantryItem  extends JDialog{
 //	public enum Mode {
@@ -34,6 +37,7 @@ public class PantryItem  extends JDialog{
 	private Item item = null;
 	private ItemService itemService = new ItemService();
 	private boolean result = false;
+	JComboBox<String> cbProductType = null;
 	
 	public PantryItem(TopShelfGui topShelfGui, Item item) {
 		super(topShelfGui, "Pantry Item", true);
@@ -62,7 +66,7 @@ public class PantryItem  extends JDialog{
 		txtName = new JTextField();
 		GridBagConstraints gbc_txtName = new GridBagConstraints();
 		gbc_txtName.gridwidth = 2;
-		gbc_txtName.insets = new Insets(0, 0, 5, 5);
+		gbc_txtName.insets = new Insets(0, 0, 5, 0);
 		gbc_txtName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtName.gridx = 1;
 		gbc_txtName.gridy = 0;
@@ -77,15 +81,24 @@ public class PantryItem  extends JDialog{
 		gbc_lblProductType.gridy = 1;
 		pMain.add(lblProductType, gbc_lblProductType);
 		
-		txtProductType = new JTextField();
-		txtProductType.setColumns(10);
-		GridBagConstraints gbc_txtProductType = new GridBagConstraints();
-		gbc_txtProductType.gridwidth = 2;
-		gbc_txtProductType.insets = new Insets(0, 0, 5, 5);
-		gbc_txtProductType.fill = GridBagConstraints.HORIZONTAL;
-		gbc_txtProductType.gridx = 1;
-		gbc_txtProductType.gridy = 1;
-		pMain.add(txtProductType, gbc_txtProductType);
+		cbProductType = new JComboBox<String>();
+		GridBagConstraints gbc_cbProductType = new GridBagConstraints();
+		gbc_cbProductType.gridwidth = 2;
+		gbc_cbProductType.insets = new Insets(0, 0, 5, 5);
+		gbc_cbProductType.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cbProductType.gridx = 1;
+		gbc_cbProductType.gridy = 1;
+		
+		
+		try {
+			List<String> productTypes = itemService.getProductTypes();
+			cbProductType.setModel(new DefaultComboBoxModel<String>(productTypes.toArray(new String[0])));
+		}
+		catch (ItemException ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage());
+		}
+		
+		pMain.add(cbProductType, gbc_cbProductType);
 		
 		JLabel lblQuantity = new JLabel("Quantity:");
 		GridBagConstraints gbc_lblQuantity = new GridBagConstraints();
@@ -100,7 +113,7 @@ public class PantryItem  extends JDialog{
 		GridBagConstraints gbc_txtQuantity = new GridBagConstraints();
 		gbc_txtQuantity.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtQuantity.gridwidth = 2;
-		gbc_txtQuantity.insets = new Insets(0, 0, 5, 5);
+		gbc_txtQuantity.insets = new Insets(0, 0, 5, 0);
 		gbc_txtQuantity.gridx = 1;
 		gbc_txtQuantity.gridy = 2;
 		pMain.add(txtQuantity, gbc_txtQuantity);
@@ -149,7 +162,6 @@ public class PantryItem  extends JDialog{
 			return;
 		
 		txtName.setText(item.getName());
-		txtProductType.setText(item.getProductType());
 		txtQuantity.setText(Integer.toString(item.getQuantity()));
 		txtExpirationDate.setText(item.getExpiryDate().toString());
 	}
@@ -160,7 +172,7 @@ public class PantryItem  extends JDialog{
 				// try to add the item
 				itemService.createItem(txtName.getText(), Integer.parseInt(txtQuantity.getText()),
 						LocalDate.parse(txtExpirationDate.getText()), 
-						txtProductType.getText(), UserService.currentUser);
+						cbProductType.getSelectedItem().toString(), UserService.currentUser);
 				result = true;
 				dispose();
 			}
@@ -168,7 +180,7 @@ public class PantryItem  extends JDialog{
 				System.out.print("Updating... ");
 				// try to update the item
 				itemService.updateItemById(item.getId(), txtName.getText(), Integer.parseInt(txtQuantity.getText()), 
-						txtProductType.getText(), LocalDate.parse(txtExpirationDate.getText()), UserService.currentUser);
+						cbProductType.getSelectedItem().toString(), LocalDate.parse(txtExpirationDate.getText()), UserService.currentUser);
 				System.out.println("done.");
 				result = true;
 				dispose();
@@ -183,7 +195,6 @@ public class PantryItem  extends JDialog{
 	 */
 	private static final long serialVersionUID = 2096133478414933468L;
 	private JTextField txtName;
-	private JTextField txtProductType;
 	private JTextField txtQuantity;
 	private JTextField txtExpirationDate;
 

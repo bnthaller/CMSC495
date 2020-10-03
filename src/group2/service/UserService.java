@@ -1,6 +1,6 @@
 package group2.service;
 
-import java.security.NoSuchAlgorithmException;
+//import java.security.NoSuchAlgorithmException;
 
 import group2.data.UserDAO;
 import group2.model.UserStatus;

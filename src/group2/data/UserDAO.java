@@ -5,8 +5,8 @@ import group2.model.User;
 import group2.model.UserException;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 
 public class UserDAO /*extends DBConnection*/ {
     Connection conn = null;
@@ -80,6 +80,7 @@ public class UserDAO /*extends DBConnection*/ {
                 user.setLastName(resultSet.getString(4));
                 user.setPassword(resultSet.getString(5));
                 user.setExpiryLength(resultSet.getInt(6));
+                System.out.println(user.getExpiryLength());
             }
             
             clearResultSet();

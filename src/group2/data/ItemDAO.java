@@ -5,8 +5,8 @@ import group2.model.Item;
 import group2.model.ItemException;
 
 import static group2.model.ItemStatus.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class ItemDAO /*extends DBConnection*/ {
         LocalDate today = java.time.LocalDate.now();
         
         StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.product_type ");
+        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.name ");
         getItemsByUserIdQuery.append("FROM pantry p, product_type pt ");
-        getItemsByUserIdQuery.append("WHERE p.pantry_type_id = pt.pantry_type_id");
+        getItemsByUserIdQuery.append("WHERE p.product_type_id = pt.product_type_id");
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
@@ -70,6 +70,7 @@ public class ItemDAO /*extends DBConnection*/ {
             
             return items;
         } catch (SQLException ex) {
+        	System.out.println("Exception: " + ex.getMessage());
         	throw new ItemException("Unable to retrieve Items.");
         }
     }
@@ -85,7 +86,7 @@ public class ItemDAO /*extends DBConnection*/ {
      */
     public Item getItemByItemId(int itemId) throws ItemException {
         StringBuilder getItemsByUserIdQuery = new StringBuilder();
-        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.product_type ");
+        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.name ");
         getItemsByUserIdQuery.append("FROM pantry p, product_type pt ");
         getItemsByUserIdQuery.append("WHERE p.product_type_id = pt.product_type_id AND pantry_id = ?");
         
@@ -205,24 +206,32 @@ public class ItemDAO /*extends DBConnection*/ {
      */
     private int getProductTypeId(String productType) throws ItemException {
     	StringBuilder getProductTypeIdQuery = new StringBuilder();
-    	getProductTypeIdQuery.append("SELECT pantry_type_id FROM pantry WHERE product_type = ?");
+    	getProductTypeIdQuery.append("SELECT product_type_id FROM product_type WHERE name = ?");
     	
     	try {
+    		
     		PreparedStatement getProductTypeIdStatement = conn.prepareStatement(getProductTypeIdQuery.toString());
     		getProductTypeIdStatement.setString(1, productType);
+    		System.out.println("Querying: " + getProductTypeIdStatement);
+    		
     		
     		resultSet = getProductTypeIdStatement.executeQuery();
-    		return resultSet.getInt(1);
+    		// need to advance the cursor
+    		if(resultSet.next())
+    			return resultSet.getInt(1);
+    		else
+        		throw new ItemException("Unable to retrieve Product Type ID.");
     	} catch (SQLException ex) {
-    		throw new ItemException("Unable to retrieve Pantry Type.");
+    		throw new ItemException("Unable to retrieve Product Type ID.");
     	}
     }
     
     public List<String> getProductTypes() throws ItemException {
     	List<String> productTypes = new ArrayList<>();
     	
+    	
     	StringBuilder getProductTypesQuery = new StringBuilder();
-    	getProductTypesQuery.append("SELECT product_type FROM product_type");
+    	getProductTypesQuery.append("SELECT name FROM product_type");
     	
     	try {
     		PreparedStatement getProductTypeStatement = conn.prepareStatement(getProductTypesQuery.toString());
