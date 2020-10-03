@@ -50,8 +50,12 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	JButton btnDeleteItem;
 	JButton btnUpdateItem;
 	ItemService itemService = new ItemService();
-	ItemTableModel itemTableModel = new ItemTableModel();
 	
+	try {
+		ItemTableModel itemTableModel = new ItemTableModel();
+	} catch (ItemException ex) {
+		JOptionPane.showMessageDialog(this, ex.getMessage());
+	}
 
 	public TopShelfGui(JFrame parent) {
 		super(parent, "Top Shelf", true);
@@ -129,7 +133,11 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 				PantryItem dlg = createPantryItemDialog(null);
 				dlg.setVisible(true);
 				if(dlg.getResult()) {
-					refreshData();
+					try {
+						refreshData();
+					} catch (ItemException ex) {
+						JOptionPane.showMessageDialog(parent, ex.getMessage());
+					}
 				}
 				else {
 //					System.out.println("false");
@@ -233,8 +241,12 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		return isLogOut;
 	}
 	
-	private void refreshData() {
-		itemTableModel.getData();
+	private void refreshData() throws ItemException {
+		try {
+			itemTableModel.getData();
+		} catch (ItemException itemException) {
+			throw itemException;
+		}
 	}
 	
 //    public void tableChanged(TableModelEvent e) {
@@ -259,8 +271,12 @@ class ItemTableModel extends AbstractTableModel {
     private Object[][] data = null;
     private ItemService itemService = new ItemService();
     
-    public ItemTableModel() {
-    	getData();
+    public ItemTableModel() throws ItemException {
+    	try {
+    		getData();
+    	} catch (ItemException itemException) {
+    		throw itemException;
+    	}
     }
     public int getColumnCount() {
         return columnNames.length;
@@ -277,7 +293,7 @@ class ItemTableModel extends AbstractTableModel {
         return data[row][col];
     }
     
-    public void getData() {
+    public void getData() throws ItemException {
     	try {
 			List<Item> items =  itemService.getItems(UserService.currentUser);
 	
@@ -291,8 +307,8 @@ class ItemTableModel extends AbstractTableModel {
 	    		data[i][4] = items.get(i).getExpiryDate();
 	    	}
 	    	fireTableDataChanged();
-    	} catch (ItemException ex) {
-    		JOptionPane.showMessageDialog(parent, ex.getMessage());
+    	} catch (ItemException itemException) {
+    		throw itemException;
     	}
     }
     
