@@ -291,8 +291,8 @@ class ItemTableModel extends AbstractTableModel {
 	    		data[i][4] = items.get(i).getExpiryDate();
 	    	}
 	    	fireTableDataChanged();
-    	} catch (ItemException ex) {
-    		JOptionPane.showMessageDialog(parent, ex.getMessage());
+    	} catch (ItemException itemException) {
+    		//throw itemException;
     	}
     }
     
