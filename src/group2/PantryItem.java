@@ -12,6 +12,7 @@ import group2.service.UserService;
 //import javafx.util.converter.DateTimeStringConverter;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
 import javax.swing.DefaultComboBoxModel;
@@ -21,6 +22,8 @@ import javax.swing.JOptionPane;
 
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Toolkit;
+
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.time.LocalDate;
@@ -155,6 +158,10 @@ public class PantryItem  extends JDialog{
 		JButton btnCancel = new JButton("Cancel");
 		pButtons.add(btnCancel);
 		populate(item);
+
+	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setLocation((int) ((dimension.getWidth() - getWidth()) / 2), 
+				(int) ((dimension.getHeight() - getHeight()) / 2));
 	}
 	
 	private void populate(Item item) {

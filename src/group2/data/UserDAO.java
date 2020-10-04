@@ -106,7 +106,7 @@ public class UserDAO /*extends DBConnection*/ {
      */
     public void updateUserById(int userId, String username, String firstName, String lastName, String password, int expiryLength) throws UserException {        
         StringBuilder updateUserByIdQuery = new StringBuilder();
-        updateUserByIdQuery.append("UPDATE user SET firstName = ?, lastName = ?, password = ?, expiry_length = ? WHERE id = ?");
+        updateUserByIdQuery.append("UPDATE user SET firstName = ?, lastName = ?, password = ?, expiry_length = ? WHERE user_id = ?");
         
         try {
             PreparedStatement updateUserByIdStatement = conn.prepareStatement(updateUserByIdQuery.toString());
@@ -115,9 +115,10 @@ public class UserDAO /*extends DBConnection*/ {
             updateUserByIdStatement.setString(3, password);
             updateUserByIdStatement.setInt(4, expiryLength);
             updateUserByIdStatement.setInt(5, userId);
-            
+            System.out.println(updateUserByIdQuery);
             updateUserByIdStatement.executeUpdate();
         } catch (SQLException ex) {
+        	System.out.println(ex.getMessage());
         	throw new UserException("Unable to update user with provided values.");
         }
     }

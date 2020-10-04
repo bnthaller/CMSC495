@@ -82,7 +82,7 @@ public class Login extends JDialog implements ActionListener {
 		this.setResizable(false);
 		this.setTitle("Top Shelf Login");
 	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-	    this.setSize(315, 161);
+	    this.setSize(315, 230);
 		this.setLocation((int) ((dimension.getWidth() - getWidth()) / 2), 
 				(int) ((dimension.getHeight() - getHeight()) / 2));
 //		frmTopShelfLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -102,9 +102,9 @@ public class Login extends JDialog implements ActionListener {
 		this.getContentPane().add(pFields, BorderLayout.NORTH);
 		GridBagLayout gbl_pFields = new GridBagLayout();
 		gbl_pFields.columnWidths = new int[]{0, 0, 0};
-		gbl_pFields.rowHeights = new int[]{0, 0, 0};
+		gbl_pFields.rowHeights = new int[]{0, 0, 0, 0, 0};
 		gbl_pFields.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_pFields.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_pFields.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE, 0.0, 0.0};
 		pFields.setLayout(gbl_pFields);
 		
 		JLabel lblNewLabel = new JLabel("Username:");
@@ -127,7 +127,7 @@ public class Login extends JDialog implements ActionListener {
 		JLabel lblNewLabel_1 = new JLabel("Password:");
 		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
 		gbc_lblNewLabel_1.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel_1.insets = new Insets(0, 0, 0, 5);
+		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
 		gbc_lblNewLabel_1.gridx = 0;
 		gbc_lblNewLabel_1.gridy = 1;
 		pFields.add(lblNewLabel_1, gbc_lblNewLabel_1);
@@ -140,6 +140,7 @@ public class Login extends JDialog implements ActionListener {
 		
 		txtPassword = new JPasswordField();
 		GridBagConstraints gbc_txtPassword = new GridBagConstraints();
+		gbc_txtPassword.insets = new Insets(0, 0, 5, 0);
 		gbc_txtPassword.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtPassword.gridx = 1;
 		gbc_txtPassword.gridy = 1;
@@ -150,8 +151,11 @@ public class Login extends JDialog implements ActionListener {
 		gbc_lblFirstName.anchor = GridBagConstraints.EAST;
 		gbc_lblFirstName.insets = new Insets(0, 0, 5, 5);
 		gbc_lblFirstName.gridx = 0;
-		gbc_lblFirstName.gridy = 2;
+		gbc_lblFirstName.gridy = 3;
 		pFields.add(lblFirstName, gbc_lblFirstName);
+		
+		
+		lblFirstName.setVisible(false);
 		
 		txtFirstName = new JTextField();
 		txtFirstName.setColumns(10);
@@ -159,15 +163,16 @@ public class Login extends JDialog implements ActionListener {
 		gbc_txtFirstName.insets = new Insets(0, 0, 5, 0);
 		gbc_txtFirstName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtFirstName.gridx = 1;
-		gbc_txtFirstName.gridy = 2;
+		gbc_txtFirstName.gridy = 3;
 		pFields.add(txtFirstName, gbc_txtFirstName);
+		txtFirstName.setVisible(false);
 		
 		JLabel lblLastName = new JLabel("Last Name:");
 		GridBagConstraints gbc_lblLastName = new GridBagConstraints();
 		gbc_lblLastName.anchor = GridBagConstraints.EAST;
 		gbc_lblLastName.insets = new Insets(0, 0, 5, 5);
 		gbc_lblLastName.gridx = 0;
-		gbc_lblLastName.gridy = 3;
+		gbc_lblLastName.gridy = 5;
 		pFields.add(lblLastName, gbc_lblLastName);
 		
 		txtLastName = new JTextField();
@@ -176,7 +181,7 @@ public class Login extends JDialog implements ActionListener {
 		gbc_txtLastName.insets = new Insets(0, 0, 5, 0);
 		gbc_txtLastName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtLastName.gridx = 1;
-		gbc_txtLastName.gridy = 3;
+		gbc_txtLastName.gridy = 5;
 		pFields.add(txtLastName, gbc_txtLastName);
 		
 		JLabel lblExpiryWarning = new JLabel("Expiry Warning:");
@@ -184,7 +189,7 @@ public class Login extends JDialog implements ActionListener {
 		gbc_lblExpiryWarning.anchor = GridBagConstraints.EAST;
 		gbc_lblExpiryWarning.insets = new Insets(0, 0, 0, 5);
 		gbc_lblExpiryWarning.gridx = 0;
-		gbc_lblExpiryWarning.gridy = 4;
+		gbc_lblExpiryWarning.gridy = 6;
 		pFields.add(lblExpiryWarning, gbc_lblExpiryWarning);
 		
 		txtExpiryWarning = new JTextField();
@@ -192,16 +197,12 @@ public class Login extends JDialog implements ActionListener {
 		GridBagConstraints gbc_txtExpiryWarning = new GridBagConstraints();
 		gbc_txtExpiryWarning.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtExpiryWarning.gridx = 1;
-		gbc_txtExpiryWarning.gridy = 4;
+		gbc_txtExpiryWarning.gridy = 6;
 		pFields.add(txtExpiryWarning, gbc_txtExpiryWarning);
 		
 		
 		JPanel pOptions = new JPanel();
 		getContentPane().add(pOptions, BorderLayout.CENTER);
-		
-		
-		lblFirstName.setVisible(false);
-		txtFirstName.setVisible(false);
 		lblLastName.setVisible(false);
 		txtLastName.setVisible(false);
 		lblExpiryWarning.setVisible(false);

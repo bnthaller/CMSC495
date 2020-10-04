@@ -25,9 +25,9 @@ import javax.swing.event.ListSelectionListener;
 //import javax.swing.event.TableModelEvent;
 //import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
+//import javax.swing.table.DefaultTableColumnModel;
+//import javax.swing.table.DefaultTableModel;
+//import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 //import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -52,7 +52,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	private static final long serialVersionUID = -8617864607802138782L;
 	
 
-	String[] columns = {"ID", "Name", "Product Type", "Quantity", "Expiration Date"};
+//	String[] columns = {"ID", "Name", "Product Type", "Quantity", "Expiration Date"};
 //	private Connection sqlConn = null;
 	private boolean isLogOut = false;
 	private JTable table;
@@ -72,7 +72,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		JMenu mnNewMenu = new JMenu("File");
 		menuBar.add(mnNewMenu);
 		
-		JMenuItem mntmSettings = new JMenuItem("Settings");
+		JMenuItem mntmSettings = new JMenuItem("User Settings");
 		mntmSettings.addActionListener(this);
 		
 		mnNewMenu.add(mntmSettings);
@@ -102,20 +102,9 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		JScrollPane scrollPane = new JScrollPane();
 		splitPane.setRightComponent(scrollPane);
 
-//		String[][] data = { 
-//				{ "1", "Item1", "Dairy", 	"16", "9/27/2020" },
-//				{ "2", "Item2", "Produce", 	"27", "9/27/2020" },
-//				{ "3", "Item3", "Meat", 		"36", "9/27/2020" },
-//				{ "4", "Item4", "Dairy", 	"46", "9/27/2020" },
-//				{ "5", "Item5", "Bread", 	"33", "9/27/2020" },
-//				{ "6", "Item6", "Alcohol", 	"73", "9/27/2020" },
-//				
-//		};
-//		table = new JTable(null, columns);
+
 		
 		table = new JTable(itemTableModel);
-//		TableColumnModel colModel = table.getColumnModel();
-//		colModel.addColumn(new TableColumn);
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				int selected = table.getSelectedRow();
@@ -235,7 +224,8 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((int) ((dimension.getWidth() - getWidth()) / 2), 
 				(int) ((dimension.getHeight() - getHeight()) / 2));
-		
+
+//		System.out.println(UserService.currentUser.getUsername());
 //		table.getModel().addTableModelListener(this);
 		
 	}
@@ -246,10 +236,20 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("Display settings...");
 		
-		Settings s = new Settings(this);
-		s.setVisible(true);
+		
+		Password dlg = new Password(this);
+		dlg.setVisible(true);
+		
+		if(dlg.getIsPasswordValidated()) {
+			System.out.println("Displaying settings...");
+			Settings s = new Settings(this);
+			s.setFirstName(UserService.currentUser.getFirstName());
+			s.setLastName(UserService.currentUser.getLastName());
+			s.setExpiryLength(UserService.currentUser.getExpiryLength());
+			s.setPassword(dlg.getPassword());
+			s.setVisible(true);
+		}
 	}
 	
 	private void setButtonState(JButton btn, boolean enabled) {
