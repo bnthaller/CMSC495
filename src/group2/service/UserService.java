@@ -79,6 +79,8 @@ public class UserService {
      */
     public User updateUser(int userId, String username, String firstName, String lastName, String password, int expiryLength) throws UserException {
     	try {
+	    	Utility.isUserValid(username, password);
+	    	
     		//Salt and hash password
 			password = Utility.preparePassword(password);
 
@@ -118,6 +120,8 @@ public class UserService {
             
             //Set the static currentUser value to this user
             currentUser = verifiedUser;
+            
+            System.out.println("Set currentUser to: " + currentUser.getUsername());
             
             //Return a the User object with the users information
             return verifiedUser;
