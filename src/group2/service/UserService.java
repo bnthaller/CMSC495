@@ -38,7 +38,11 @@ public class UserService {
 			int userId = userDAO.createUser(username, firstName, lastName, Utility.preparePassword(password), expiryLength);
 			
 			//Return the newly created user
-			return userDAO.getUserById(userId);
+			User registeredUser = userDAO.getUserById(userId);
+
+            currentUser = registeredUser;
+            return registeredUser;
+            
     	} catch (UserException userException) {
     		throw (userException);
     	}
