@@ -180,7 +180,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 					JOptionPane.showMessageDialog(parent, ex.getMessage());
 				}
 				refreshData();
-			}
+			}	
 		});
 		setButtonState(btnDeleteItem, false);
 		panel_1.add(btnDeleteItem);

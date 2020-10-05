@@ -26,10 +26,13 @@ import java.awt.Toolkit;
 
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 //import java.util.Date;
 import java.awt.event.ActionEvent;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 
 public class PantryItem  extends JDialog{
 //	public enum Mode {
@@ -41,6 +44,7 @@ public class PantryItem  extends JDialog{
 	private ItemService itemService = new ItemService();
 	private boolean result = false;
 	JComboBox<String> cbProductType = null;
+	JFormattedTextField txtExpirationDate = null;
 	
 	public PantryItem(TopShelfGui topShelfGui, Item item) {
 		super(topShelfGui, "Pantry Item", true);
@@ -87,7 +91,7 @@ public class PantryItem  extends JDialog{
 		cbProductType = new JComboBox<String>();
 		GridBagConstraints gbc_cbProductType = new GridBagConstraints();
 		gbc_cbProductType.gridwidth = 2;
-		gbc_cbProductType.insets = new Insets(0, 0, 5, 5);
+		gbc_cbProductType.insets = new Insets(0, 0, 5, 0);
 		gbc_cbProductType.fill = GridBagConstraints.HORIZONTAL;
 		gbc_cbProductType.gridx = 1;
 		gbc_cbProductType.gridy = 1;
@@ -129,8 +133,9 @@ public class PantryItem  extends JDialog{
 		gbc_lblExpiration.gridy = 3;
 		pMain.add(lblExpiration, gbc_lblExpiration);
 		
-		txtExpirationDate = new JTextField();
-		txtExpirationDate.setColumns(10);
+		
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		txtExpirationDate = new JFormattedTextField(format);
 		GridBagConstraints gbc_txtExpirationDate = new GridBagConstraints();
 		gbc_txtExpirationDate.insets = new Insets(0, 0, 0, 5);
 		gbc_txtExpirationDate.fill = GridBagConstraints.HORIZONTAL;
@@ -139,6 +144,12 @@ public class PantryItem  extends JDialog{
 		pMain.add(txtExpirationDate, gbc_txtExpirationDate);
 		
 		JButton btnExpirationDate = new JButton("...");
+		btnExpirationDate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				
+			}
+		});
 		GridBagConstraints gbc_btnExpirationDate = new GridBagConstraints();
 		gbc_btnExpirationDate.gridx = 2;
 		gbc_btnExpirationDate.gridy = 3;
@@ -170,7 +181,6 @@ public class PantryItem  extends JDialog{
 		
 		txtName.setText(item.getName());
 		txtQuantity.setText(Integer.toString(item.getQuantity()));
-		txtExpirationDate.setText(item.getExpiryDate().toString());
 	}
 	
 	private void doOK() {
@@ -203,7 +213,6 @@ public class PantryItem  extends JDialog{
 	private static final long serialVersionUID = 2096133478414933468L;
 	private JTextField txtName;
 	private JTextField txtQuantity;
-	private JTextField txtExpirationDate;
 
 	public boolean getResult() {
 		return result;
