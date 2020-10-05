@@ -160,4 +160,33 @@ public class UserDAO /*extends DBConnection*/ {
         }
     }
     
+    public boolean isUsernameUnique(String username) throws UserException {
+    	int count;
+    	
+    	StringBuilder usernameQuery = new StringBuilder();
+    	usernameQuery.append("SELECT count(*) FROM user WHERE username = ?");
+    	
+    	try {
+            PreparedStatement usernameStatement = conn.prepareStatement(usernameQuery.toString());
+            usernameStatement.setString(1, username);
+            
+            resultSet = usernameStatement.executeQuery();
+            
+            if (resultSet.next()) {
+                count = resultSet.getInt(1);
+            } else {
+            	throw new UserException("Unable to find user with provided username.");
+            }
+            
+            clearResultSet();
+            
+            if (count > 0) {
+            	return false;
+            }
+            return true;
+        } catch (SQLException ex) {
+            throw new UserException("Unable to find user with provided username.");
+        }
+    }
+    
 }
