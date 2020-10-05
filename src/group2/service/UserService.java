@@ -33,6 +33,10 @@ public class UserService {
     	try {
     		//Validate Users username and password
 	    	Utility.isUserValid(username, password);
+	    	
+			if (!isUsernameUnique(username)) {
+				throw new UserException("Username alread exists in the system.");
+			}
 			
 	    	//Create the user and return the new Users userId
 			int userId = userDAO.createUser(username, firstName, lastName, Utility.preparePassword(password), expiryLength);
@@ -129,6 +133,14 @@ public class UserService {
             
             //Return a the User object with the users information
             return verifiedUser;
+    	} catch (UserException userException) {
+    		throw (userException);
+    	}
+    }
+    
+    public boolean isUsernameUnique(String username) throws UserException {
+    	try {
+    		return userDAO.isUsernameUnique(username);
     	} catch (UserException userException) {
     		throw (userException);
     	}
