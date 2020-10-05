@@ -75,6 +75,53 @@ public class ItemDAO /*extends DBConnection*/ {
         }
     }
     
+    public List<Item> getItems(int expiryLength, String filterValue) throws ItemException {
+        List<Item> items = new ArrayList<>();
+        LocalDate today = java.time.LocalDate.now();
+        
+        StringBuilder getItemsByUserIdQuery = new StringBuilder();
+        getItemsByUserIdQuery.append("SELECT p.pantry_id, p.name, p.quantity, p.expiration, pt.name ");
+        getItemsByUserIdQuery.append("FROM pantry p, product_type pt ");
+        getItemsByUserIdQuery.append("WHERE p.product_type_id = pt.product_type_id");
+        
+        if (filterValue != "" && filterValue != "All") {
+        	int productTypeId = getProductTypeId(filterValue);
+        	getItemsByUserIdQuery.append(" AND p.product_type_id = " + Integer.toString(productTypeId));
+        }
+        
+        try {
+            PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
+           
+            resultSet = getItemsByUserIdStatement.executeQuery();
+            
+            while (resultSet.next()) {
+                Item item = new Item();
+                item.setId(resultSet.getInt(1));
+                item.setName(resultSet.getString(2));
+                item.setQuantity(resultSet.getInt(3));
+                item.setExpiryDate(resultSet.getDate(4).toLocalDate());
+                item.setProductType(resultSet.getString(5));
+                
+                if (item.getExpiryDate().isAfter(today)) {
+                    item.setStatus(EXPIRED);
+                } else if (item.getExpiryDate().plusDays(expiryLength).isAfter(today)) {
+                    item.setStatus(EXPIRING);
+                } else {
+                    item.setStatus(VALID);
+                }
+                
+                items.add(item);
+            }
+            
+            clearResultSet();
+            
+            return items;
+        } catch (SQLException ex) {
+        	System.out.println("Exception: " + ex.getMessage());
+        	throw new ItemException("Unable to retrieve Items.");
+        }
+    }
+    
     /**
      * 
      * @param itemId

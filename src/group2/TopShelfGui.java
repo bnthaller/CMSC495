@@ -61,7 +61,8 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 	ItemService itemService = new ItemService();
 	ItemTableModel itemTableModel = new ItemTableModel();
 	TableRowSorter<TableModel> sorter = null;
-	List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);	
+	List<RowSorter.SortKey> sortKeys = new ArrayList<>(1);
+	String filterValue = "";
 
 	public TopShelfGui(JFrame parent) {
 		super(parent, "Top Shelf", true);
@@ -131,7 +132,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 				PantryItem dlg = createPantryItemDialog(null);
 				dlg.setVisible(true);
 				if(dlg.getResult()) {
-					refreshData();
+					refreshData(filterValue);
 				}
 				else {
 //					System.out.println("false");
@@ -154,7 +155,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 					PantryItem dlg = createPantryItemDialog(selectedItem);
 					dlg.setVisible(true);
 					if(dlg.getResult())
-						refreshData();
+						refreshData(filterValue);
 				} catch (ItemException ex) {
 					JOptionPane.showMessageDialog(parent, ex.getMessage());
 				}
@@ -179,7 +180,7 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 				} catch (ItemException ex) {
 					JOptionPane.showMessageDialog(parent, ex.getMessage());
 				}
-				refreshData();
+				refreshData(filterValue);
 			}
 		});
 		setButtonState(btnDeleteItem, false);
@@ -193,9 +194,26 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		panel_1.add(lblProductType);
 		
 		JComboBox<String> cbProductType = new JComboBox<String>();
+		cbProductType.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				filterValue = String.valueOf(cbProductType.getSelectedItem());
+				refreshData(filterValue);
+			}
+		});
+		
 		panel_1.add(cbProductType);
 		cbProductType.addItem("All");
 		
+		try {
+			List<String> productTypes = itemService.getProductTypes();
+			
+			for (String pt : productTypes) {
+				cbProductType.addItem(pt);
+			}
+		} catch (ItemException itemException) {
+			JOptionPane.showMessageDialog(parent, itemException.getMessage());
+		}
+				
 		JLabel lblSortBy = new JLabel("Sort By:", SwingConstants.LEFT);
 		panel_1.add(lblSortBy);
 
@@ -260,8 +278,8 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		return isLogOut;
 	}
 	
-	private void refreshData() {
-		itemTableModel.getData();
+	private void refreshData(String filterValue) {
+		itemTableModel.getData(filterValue);
 
 	}
 	
@@ -289,7 +307,7 @@ class ItemTableModel extends AbstractTableModel {
     Class[] types = { Integer.class, String.class, String.class, Integer.class, LocalDate.class };
 
     public ItemTableModel() {
-    	getData();
+    	getData("");
     }
     public int getColumnCount() {
         return columnNames.length;
@@ -312,9 +330,9 @@ class ItemTableModel extends AbstractTableModel {
     public Class getColumnClass(int columnIndex) {
     	return this.types[columnIndex];
     }
-    public void getData() {
+    public void getData(String filterValue) {
     	try {
-			List<Item> items =  itemService.getItems(UserService.currentUser);
+			List<Item> items =  itemService.getItems(UserService.currentUser, filterValue);
 	
 	    	data = new Object[items.size()][5];
 	    	for(int i = 0; i < items.size(); ++i) {

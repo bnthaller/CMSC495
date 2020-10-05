@@ -40,6 +40,14 @@ public class ItemService {
         }
     }
     
+    public List<Item> getItems(User user, String filterValue) throws ItemException {
+    	try {
+    		return itemDAO.getItems(user.getExpiryLength(), filterValue);
+    	} catch (ItemException itemException) {
+        	throw itemException;
+        }
+    }
+    
     public Item getItemByItemId(int itemId) throws ItemException {
     	try {
     		return itemDAO.getItemByItemId(itemId);
