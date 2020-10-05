@@ -55,9 +55,9 @@ public class ItemDAO /*extends DBConnection*/ {
                 item.setExpiryDate(resultSet.getDate(4).toLocalDate());
                 item.setProductType(resultSet.getString(5));
                 
-                if (item.getExpiryDate().isAfter(today)) {
+                if (item.getExpiryDate().isBefore(today)) {
                     item.setStatus(EXPIRED);
-                } else if (item.getExpiryDate().plusDays(expiryLength).isAfter(today)) {
+                } else if (item.getExpiryDate().minusDays(expiryLength).isAfter(today)) {
                     item.setStatus(EXPIRING);
                 } else {
                     item.setStatus(VALID);
@@ -102,9 +102,9 @@ public class ItemDAO /*extends DBConnection*/ {
                 item.setExpiryDate(resultSet.getDate(4).toLocalDate());
                 item.setProductType(resultSet.getString(5));
                 
-                if (item.getExpiryDate().isAfter(today)) {
+                if (item.getExpiryDate().isBefore(today)) {
                     item.setStatus(EXPIRED);
-                } else if (item.getExpiryDate().plusDays(expiryLength).isAfter(today)) {
+                } else if (item.getExpiryDate().minusDays(expiryLength).isAfter(today)) {
                     item.setStatus(EXPIRING);
                 } else {
                     item.setStatus(VALID);

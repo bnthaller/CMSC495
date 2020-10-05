@@ -35,6 +35,7 @@ import javax.swing.table.TableRowSorter;
 //import group2.data.UserDAO;
 import group2.model.Item;
 import group2.model.ItemException;
+import group2.model.ItemStatus;
 import group2.service.ItemService;
 import group2.service.UserService;
 
@@ -245,6 +246,31 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 
 //		System.out.println(UserService.currentUser.getUsername());
 //		table.getModel().addTableModelListener(this);
+		
+		try {
+			List<Item> items = itemService.getItems(UserService.currentUser, filterValue);
+			StringBuilder expiredItemsNotice = new StringBuilder();
+			StringBuilder expiringItemsNotice = new StringBuilder();
+			
+			for (Item item : items) {
+				if (item.getStatus() == ItemStatus.EXPIRED) {
+					if (expiredItemsNotice.length() > 0) {
+						expiredItemsNotice.append(", ");
+					}
+					expiredItemsNotice.append(item.getName());
+				} else if (item.getStatus() == ItemStatus.EXPIRING) {
+					if (expiringItemsNotice.length() > 0) {
+						expiringItemsNotice.append(", ");
+					}
+					expiringItemsNotice.append(item.getName());
+				}
+			}
+						
+			JOptionPane.showMessageDialog(parent, "<html><body><p style='width: 400px;'>Expired Items: " + expiredItemsNotice.toString() + "</p></body></html>");
+			JOptionPane.showMessageDialog(parent, "<html><body><p style='width: 400px;'>Expiring Items: " + expiringItemsNotice.toString() + "</p></body></html>");
+		} catch (ItemException itemException) {
+			JOptionPane.showMessageDialog(parent, "Unable to load Items.");
+		}
 		
 	}
 	
