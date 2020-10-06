@@ -40,10 +40,12 @@ public class Settings extends JDialog {
 	private JTextField txtFirstName;
 	private JTextField txtLastName;
 	private JPasswordField txtNewPassword;
+	JButton btnOK;
 	private User currentUser = null;
 	
 	public Settings(JDialog parent) {
 		super(parent, true);
+		getRootPane().setDefaultButton(btnOK);
 		setTitle("Top Shelf Settings");
 
 	    this.setSize(351, 208);
@@ -142,7 +144,7 @@ public class Settings extends JDialog {
 		panel.add(txtExpiryLength, gbc_txtExpiryLength);
 		txtExpiryLength.setColumns(10);
 		
-		JButton btnOK = new JButton("OK");
+		btnOK = new JButton("OK");
 		btnOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				UserService userService = new UserService();

@@ -32,6 +32,8 @@ import javax.swing.table.TableRowSorter;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -122,7 +124,29 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 				setButtonState(btnUpdateItem, selected != -1);
 					
 			}
-		});
+		});      
+		table.addMouseListener(new MouseAdapter() {
+	         public void mouseClicked(MouseEvent me) {
+	             if (me.getClickCount() == 2) {
+	                JTable target = (JTable)me.getSource();
+	                int selected = target.getSelectedRow(); // select a row
+					int id = (int)table.getValueAt(selected, 0);
+					
+					try {
+						Item selectedItem = itemService.getItemByItemId(id);
+						System.out.println("id " + selectedItem.getId());
+						PantryItem dlg = createPantryItemDialog(selectedItem);
+						dlg.setVisible(true);
+						if(dlg.getResult())
+							refreshData(filterValue);
+					} catch (ItemException ex) {
+						JOptionPane.showMessageDialog(parent, ex.getMessage());
+					}
+	             }
+	          }
+	       });
+		
+		
 		scrollPane.setViewportView(table);
 
 		TableColumnModel tcm = table.getColumnModel();
@@ -175,18 +199,23 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 			public void actionPerformed(ActionEvent e) {
 				int[] selected = table.getSelectedRows();
 
-				try {
-					for(int s : selected) {
-						int id = (int)table.getValueAt(s, 0);
-						System.out.println(selected);
-						
-							itemService.deleteItemById(id, UserService.currentUser);
-						
+				int dialogResult = JOptionPane.showConfirmDialog(null, 
+						"Are you sure you want to delete " + selected.length + " items?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					try {
+						for(int s : selected) {
+							int id = (int)table.getValueAt(s, 0);
+							System.out.println(selected);
+							
+								itemService.deleteItemById(id, UserService.currentUser);
+							
+						}
+					} catch (ItemException ex) {
+						JOptionPane.showMessageDialog(parent, ex.getMessage());
 					}
-				} catch (ItemException ex) {
-					JOptionPane.showMessageDialog(parent, ex.getMessage());
+					refreshData(filterValue);
 				}
-				refreshData(filterValue);
+
 			}
 		});
 		setButtonState(btnDeleteItem, false);

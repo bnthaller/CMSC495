@@ -40,6 +40,7 @@ public class PantryItem  extends JDialog{
 //		UPDATE
 //	}
 //	private Mode mode = Mode.ADD;
+	JButton btnOK;
 	private Item item = null;
 	private ItemService itemService = new ItemService();
 	private boolean result = false;
@@ -48,6 +49,8 @@ public class PantryItem  extends JDialog{
 	
 	public PantryItem(TopShelfGui topShelfGui, Item item) {
 		super(topShelfGui, "Pantry Item", true);
+		getRootPane().setDefaultButton(btnOK);
+		
 		this.item = item;
 
 	    this.setSize(300, 200);
@@ -137,34 +140,22 @@ public class PantryItem  extends JDialog{
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		txtExpirationDate = new JFormattedTextField(format);
 		GridBagConstraints gbc_txtExpirationDate = new GridBagConstraints();
-		gbc_txtExpirationDate.insets = new Insets(0, 0, 0, 5);
+		gbc_txtExpirationDate.gridwidth = 2;
 		gbc_txtExpirationDate.fill = GridBagConstraints.HORIZONTAL;
 		gbc_txtExpirationDate.gridx = 1;
 		gbc_txtExpirationDate.gridy = 3;
 		pMain.add(txtExpirationDate, gbc_txtExpirationDate);
 		
-		JButton btnExpirationDate = new JButton("...");
-		btnExpirationDate.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				
-			}
-		});
-		GridBagConstraints gbc_btnExpirationDate = new GridBagConstraints();
-		gbc_btnExpirationDate.gridx = 2;
-		gbc_btnExpirationDate.gridy = 3;
-		pMain.add(btnExpirationDate, gbc_btnExpirationDate);
-		
 		JPanel pButtons = new JPanel();
 		getContentPane().add(pButtons, BorderLayout.SOUTH);
 		
-		JButton btnNewButton = new JButton("OK");
-		btnNewButton.addActionListener(new ActionListener() {
+		btnOK = new JButton("OK");
+		btnOK.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				doOK();
 			}
 		});
-		pButtons.add(btnNewButton);
+		pButtons.add(btnOK);
 		
 		JButton btnCancel = new JButton("Cancel");
 		pButtons.add(btnCancel);
