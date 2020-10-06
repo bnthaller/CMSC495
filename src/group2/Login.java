@@ -52,21 +52,6 @@ public class Login extends JDialog implements ActionListener {
 //	Connection sqlConn = null;
 	private UserService userService = new UserService();
 
-//	/**
-//	 * Launch the application.
-//	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					Login window = new Login();
-//					window.frmTopShelfLogin.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	/**
 	 * Create the application.
@@ -82,7 +67,7 @@ public class Login extends JDialog implements ActionListener {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-//		this = new JDialog();
+		getRootPane().setDefaultButton(btnOK);
 		this.setResizable(false);
 		this.setTitle("Top Shelf Login");
 	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
