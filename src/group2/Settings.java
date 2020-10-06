@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 import java.awt.GridBagConstraints;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.NumberFormatter;
 
 import group2.model.User;
 import group2.model.UserException;
@@ -19,10 +20,12 @@ import java.awt.Toolkit;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 //import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
@@ -33,7 +36,7 @@ public class Settings extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = 5370120067904098155L;
-	private JTextField txtExpiryLength;
+	JFormattedTextField txtExpiryLength;
 	private JTextField txtFirstName;
 	private JTextField txtLastName;
 	private JPasswordField txtNewPassword;
@@ -122,7 +125,14 @@ public class Settings extends JDialog {
 		gbc_lblNewLabel.gridy = 4;
 		panel.add(lblNewLabel, gbc_lblNewLabel);
 		
-		txtExpiryLength = new JTextField();
+		
+	    NumberFormat format = NumberFormat.getInstance();
+	    NumberFormatter formatter = new NumberFormatter(format);
+	    formatter.setValueClass(Integer.class);
+	    formatter.setMinimum(0);
+	    formatter.setMaximum(Integer.MAX_VALUE);
+	    formatter.setAllowsInvalid(false);
+		txtExpiryLength = new JFormattedTextField(formatter);
 		GridBagConstraints gbc_txtExpiryLength = new GridBagConstraints();
 		gbc_txtExpiryLength.gridwidth = 2;
 		gbc_txtExpiryLength.insets = new Insets(0, 0, 5, 0);
@@ -165,6 +175,11 @@ public class Settings extends JDialog {
 		panel.add(btnOK, gbc_btnOK);
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		GridBagConstraints gbc_btnCancel = new GridBagConstraints();
 		gbc_btnCancel.insets = new Insets(0, 0, 5, 0);
 		gbc_btnCancel.fill = GridBagConstraints.HORIZONTAL;
