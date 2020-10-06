@@ -21,12 +21,10 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-//				Connection sqlConn = null;
-				
+			public void run() {				
 				try {
 					// create the sql connection
-					sqlConn = DriverManager.getConnection(dbUrl, "root", "password");
+					sqlConn = DriverManager.getConnection(dbUrl, "user", "*C06327039E918D3247E4438D3785C723719DC8B5");
 					
 					// show the login screen until the user "exits" the application
 					// if the user "logs out", the login screen will be presented again
