@@ -181,6 +181,7 @@ public class PantryItem  extends JDialog{
 		
 		txtName.setText(item.getName());
 		txtQuantity.setText(Integer.toString(item.getQuantity()));
+		txtExpirationDate.setText(item.getExpiryDate().toString());
 	}
 	
 	private void doOK() {
@@ -194,11 +195,11 @@ public class PantryItem  extends JDialog{
 				dispose();
 			}
 			else {
-				System.out.print("Updating... ");
+//				System.out.print("Updating... ");
 				// try to update the item
 				itemService.updateItemById(item.getId(), txtName.getText(), Integer.parseInt(txtQuantity.getText()), 
 						cbProductType.getSelectedItem().toString(), LocalDate.parse(txtExpirationDate.getText()), UserService.currentUser);
-				System.out.println("done.");
+//				System.out.println("done.");
 				result = true;
 				dispose();
 			}

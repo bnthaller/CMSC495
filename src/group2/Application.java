@@ -8,6 +8,8 @@ import java.sql.DriverManager;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import group2.service.UserService;
+
 
 public class Application {
 	private static String dbUrl = "jdbc:mysql://localhost/topshelf";
@@ -33,10 +35,10 @@ public class Application {
 						// reset this boolean if the user logged out (convoluted)
 						showLoginScreen = false;
 						
-						System.out.println("Showing login screen... ");
 						boolean loginSuccess = (new Login(rootFrame, "Login").getLoginResponse());
 
 						if(loginSuccess) {
+							System.out.println("Welcome to Top Shelf, " + UserService.currentUser.getFirstName() + " " + UserService.currentUser.getLastName());
 							TopShelfGui g = new TopShelfGui(rootFrame);
 							g.setVisible(true);
 							

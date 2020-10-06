@@ -2,6 +2,7 @@ package group2;
 
 
 import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,7 +20,10 @@ import java.awt.Dimension;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.NumberFormatter;
+
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 //import java.sql.Connection;
@@ -82,7 +86,7 @@ public class Login extends JDialog implements ActionListener {
 		this.setResizable(false);
 		this.setTitle("Top Shelf Login");
 	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-	    this.setSize(315, 230);
+	    this.setSize(315, 341);
 		this.setLocation((int) ((dimension.getWidth() - getWidth()) / 2), 
 				(int) ((dimension.getHeight() - getHeight()) / 2));
 //		frmTopShelfLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -191,8 +195,14 @@ public class Login extends JDialog implements ActionListener {
 		gbc_lblExpiryWarning.gridx = 0;
 		gbc_lblExpiryWarning.gridy = 6;
 		pFields.add(lblExpiryWarning, gbc_lblExpiryWarning);
-		
-		txtExpiryWarning = new JTextField();
+
+	    NumberFormat format = NumberFormat.getInstance();
+	    NumberFormatter formatter = new NumberFormatter(format);
+	    formatter.setValueClass(Integer.class);
+	    formatter.setMinimum(0);
+	    formatter.setMaximum(Integer.MAX_VALUE);
+	    formatter.setAllowsInvalid(false);
+		txtExpiryWarning = new JFormattedTextField(formatter);
 		txtExpiryWarning.setColumns(10);
 		GridBagConstraints gbc_txtExpiryWarning = new GridBagConstraints();
 		gbc_txtExpiryWarning.fill = GridBagConstraints.HORIZONTAL;
@@ -213,7 +223,7 @@ public class Login extends JDialog implements ActionListener {
 		rbLogIn = new JRadioButton("Log In");
 		rbLogIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("selected log in");
+				clearFields();
 				lblFirstName.setVisible(false);
 				txtFirstName.setVisible(false);
 				lblLastName.setVisible(false);
@@ -230,7 +240,8 @@ public class Login extends JDialog implements ActionListener {
 		rbRegister = new JRadioButton("Register");
 		rbRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("selected register");				
+				clearFields();		
+				txtExpiryWarning.setText("5");
 				lblFirstName.setVisible(true);
 				txtFirstName.setVisible(true);
 				lblLastName.setVisible(true);
@@ -290,5 +301,13 @@ public class Login extends JDialog implements ActionListener {
 
 	private void setWindowSize(int width, int height) {
 		this.setSize(width, height);
+	}
+	
+	private void clearFields() {
+		txtExpiryWarning.setText("");
+		txtFirstName.setText("");
+		txtLastName.setText("");
+		txtPassword.setText("");
+		txtUsername.setText("");
 	}
 }

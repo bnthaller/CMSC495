@@ -18,7 +18,6 @@ public class ItemService {
     		itemDAO.createItem(name, quantity, expiryDate, productType, user.getId());
     		return itemDAO.getItems(user.getExpiryLength());
     	} catch (ItemException itemException) {
-    		System.out.println("asdfasdF");
         	throw itemException;
         }
     }

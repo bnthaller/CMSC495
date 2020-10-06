@@ -44,7 +44,8 @@ public class ItemDAO /*extends DBConnection*/ {
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
-           
+
+            System.out.println("SELECT: " + getItemsByUserIdStatement);
             resultSet = getItemsByUserIdStatement.executeQuery();
             
             while (resultSet.next()) {
@@ -57,7 +58,7 @@ public class ItemDAO /*extends DBConnection*/ {
                 
                 if (item.getExpiryDate().isBefore(today)) {
                     item.setStatus(EXPIRED);
-                } else if (item.getExpiryDate().minusDays(expiryLength).isAfter(today)) {
+                } else if (item.getExpiryDate().minusDays(expiryLength).isBefore(today)) {
                     item.setStatus(EXPIRING);
                 } else {
                     item.setStatus(VALID);
@@ -91,7 +92,8 @@ public class ItemDAO /*extends DBConnection*/ {
         
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
-           
+
+            System.out.println("SELECT: " + getItemsByUserIdStatement);
             resultSet = getItemsByUserIdStatement.executeQuery();
             
             while (resultSet.next()) {
@@ -140,7 +142,8 @@ public class ItemDAO /*extends DBConnection*/ {
         try {
             PreparedStatement getItemsByUserIdStatement = conn.prepareStatement(getItemsByUserIdQuery.toString());
             getItemsByUserIdStatement.setInt(1, itemId);
-            
+
+            System.out.println("SELECT: " + getItemsByUserIdStatement);
             resultSet = getItemsByUserIdStatement.executeQuery();
             Item item = null;
             if (resultSet.next()) {
@@ -183,7 +186,8 @@ public class ItemDAO /*extends DBConnection*/ {
             createItemStatement.setInt(2, quantity);
             createItemStatement.setDate(3, Date.valueOf(expiryDate));
             createItemStatement.setInt(4, getProductTypeId(productType));
-            
+
+            System.out.println("INSERT: " + createItemStatement);
             createItemStatement.executeUpdate();
         } catch (SQLException ex) {
         	throw new ItemException("Unable to create the item.");
@@ -213,7 +217,7 @@ public class ItemDAO /*extends DBConnection*/ {
             updateItemByIdStatement.setInt(3, getProductTypeId(productType));
             updateItemByIdStatement.setDate(4, Date.valueOf(expiryDate));
             updateItemByIdStatement.setInt(5, itemId);
-            
+            System.out.println("UPDATE: " + updateItemByIdQuery);
             updateItemByIdStatement.executeUpdate();
         } catch (SQLException ex) {
         	throw new ItemException("Unable to update the item.");
@@ -235,7 +239,8 @@ public class ItemDAO /*extends DBConnection*/ {
         try {
             PreparedStatement deleteItemByIdStatement = conn.prepareStatement(deleteItemByIdQuery.toString());
             deleteItemByIdStatement.setInt(1, itemId);
-            
+
+            System.out.println("DELETE: " + deleteItemByIdStatement);
             deleteItemByIdStatement.executeUpdate();
         } catch (SQLException ex) {
         	throw new ItemException("Unable to delete the item.");
@@ -259,7 +264,7 @@ public class ItemDAO /*extends DBConnection*/ {
     		
     		PreparedStatement getProductTypeIdStatement = conn.prepareStatement(getProductTypeIdQuery.toString());
     		getProductTypeIdStatement.setString(1, productType);
-    		System.out.println("Querying: " + getProductTypeIdStatement);
+    		System.out.println("SELECT: " + getProductTypeIdStatement);
     		
     		
     		resultSet = getProductTypeIdStatement.executeQuery();
@@ -282,6 +287,7 @@ public class ItemDAO /*extends DBConnection*/ {
     	
     	try {
     		PreparedStatement getProductTypeStatement = conn.prepareStatement(getProductTypesQuery.toString());
+    		System.out.println("SELECT: " + getProductTypeStatement);
     		resultSet = getProductTypeStatement.executeQuery();
     		
     		while (resultSet.next()) {
@@ -295,5 +301,4 @@ public class ItemDAO /*extends DBConnection*/ {
     		throw new ItemException("Unable to retrieve Product Types.");
     	}
     }
-    
 }

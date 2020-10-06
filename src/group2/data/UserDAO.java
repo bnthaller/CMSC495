@@ -46,7 +46,13 @@ public class UserDAO /*extends DBConnection*/ {
             createUserStatement.setString(4, password);
             createUserStatement.setInt(5, expiryLength);
             
-            return createUserStatement.executeUpdate();
+            createUserStatement.executeUpdate();
+            ResultSet rs = createUserStatement.getGeneratedKeys();
+            if(rs.next()) {
+            	return rs.getInt(1);
+            }
+            else
+                throw new UserException("Unable to create new user.");
         } catch (SQLException ex) {
             throw new UserException("Unable to create new user.");
         }
@@ -62,7 +68,6 @@ public class UserDAO /*extends DBConnection*/ {
      * If unable to hydrate user, UserException is thrown.
      */
     public User getUserById(int userId) throws UserException {
-        User user = new User();
         
         StringBuilder getUserByIdQuery = new StringBuilder();
         getUserByIdQuery.append("SELECT user_id, username, firstName, lastName, password, expiry_length FROM User WHERE user_id = ?");
@@ -74,20 +79,20 @@ public class UserDAO /*extends DBConnection*/ {
             resultSet = getUserByIdStatement.executeQuery();
 
             if (resultSet.next()) {
+                User user = new User();
                 user.setId(resultSet.getInt(1));
                 user.setUsername(resultSet.getString(2));
                 user.setFirstName(resultSet.getString(3));
                 user.setLastName(resultSet.getString(4));
                 user.setPassword(resultSet.getString(5));
                 user.setExpiryLength(resultSet.getInt(6));
-                System.out.println(user.getExpiryLength());
+                clearResultSet();
+                return user;
             }
-            
-            clearResultSet();
-            
-            return user;
+            else
+            	throw new UserException("Unable to find user.");
         } catch (SQLException ex) {
-        	throw new UserException("Unable to find user.");
+        	throw new UserException(ex.getMessage());
         }
     }
     
@@ -115,7 +120,6 @@ public class UserDAO /*extends DBConnection*/ {
             updateUserByIdStatement.setString(3, password);
             updateUserByIdStatement.setInt(4, expiryLength);
             updateUserByIdStatement.setInt(5, userId);
-            System.out.println(updateUserByIdQuery);
             updateUserByIdStatement.executeUpdate();
         } catch (SQLException ex) {
         	System.out.println(ex.getMessage());

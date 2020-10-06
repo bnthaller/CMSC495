@@ -154,7 +154,7 @@ public class Utility {
 				charCount++;
 		}
 
-		if (charCount < 1 || charCount > 30) {
+		if (charCount < 5 || charCount > 255) {
 			validationOutcome = false;
 		} else {
 			boolean characterCheck = alphanumericSpecialCharacterCheck(password);

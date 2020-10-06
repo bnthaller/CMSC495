@@ -35,7 +35,7 @@ public class UserService {
 	    	Utility.isUserValid(username, password);
 	    	
 			if (!isUsernameUnique(username)) {
-				throw new UserException("Username alread exists in the system.");
+				throw new UserException("Username already exists in the system.");
 			}
 			
 	    	//Create the user and return the new Users userId
@@ -43,7 +43,7 @@ public class UserService {
 			
 			//Return the newly created user
 			User registeredUser = userDAO.getUserById(userId);
-
+			System.out.println("current user is " + registeredUser.getUsername());
             currentUser = registeredUser;
             return registeredUser;
             
@@ -129,7 +129,7 @@ public class UserService {
             //Set the static currentUser value to this user
             currentUser = verifiedUser;
             
-            System.out.println("Set currentUser to: " + currentUser.getUsername());
+//            System.out.println("Set currentUser to: " + currentUser.getUsername());
             
             //Return a the User object with the users information
             return verifiedUser;
