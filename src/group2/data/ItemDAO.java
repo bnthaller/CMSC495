@@ -106,7 +106,7 @@ public class ItemDAO /*extends DBConnection*/ {
                 
                 if (item.getExpiryDate().isBefore(today)) {
                     item.setStatus(EXPIRED);
-                } else if (item.getExpiryDate().minusDays(expiryLength).isAfter(today)) {
+                } else if (item.getExpiryDate().minusDays(expiryLength).isBefore(today)) {
                     item.setStatus(EXPIRING);
                 } else {
                     item.setStatus(VALID);

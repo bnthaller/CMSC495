@@ -280,6 +280,9 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 		this.setLocation((int) ((dimension.getWidth() - getWidth()) / 2), 
 				(int) ((dimension.getHeight() - getHeight()) / 2));
 		
+		boolean showExpiredMessage = false;
+		boolean showExpiringMessage = false;
+		
 		try {
 			List<Item> items = itemService.getItems(UserService.currentUser, filterValue);
 			StringBuilder expiredItemsNotice = new StringBuilder();
@@ -287,11 +290,13 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 			
 			for (Item item : items) {
 				if (item.getStatus() == ItemStatus.EXPIRED) {
+					showExpiredMessage = true;
 					if (expiredItemsNotice.length() > 0) {
 						expiredItemsNotice.append(", ");
 					}
 					expiredItemsNotice.append(item.getName());
 				} else if (item.getStatus() == ItemStatus.EXPIRING) {
+					showExpiringMessage = true;
 					if (expiringItemsNotice.length() > 0) {
 						expiringItemsNotice.append(", ");
 					}
@@ -299,8 +304,13 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 				}
 			}
 						
-			JOptionPane.showMessageDialog(parent, "<html><body><p style='width: 400px;'>Expired Items: " + expiredItemsNotice.toString() + "</p></body></html>");
-			JOptionPane.showMessageDialog(parent, "<html><body><p style='width: 400px;'>Expiring Items: " + expiringItemsNotice.toString() + "</p></body></html>");
+			if (showExpiredMessage) {
+				JOptionPane.showMessageDialog(parent, "<html><body><p style='width: 400px;'>Expired Items: " + expiredItemsNotice.toString() + "</p></body></html>");
+			}
+			
+			if (showExpiringMessage) {
+				JOptionPane.showMessageDialog(parent, "<html><body><p style='width: 400px;'>Expiring Items: " + expiringItemsNotice.toString() + "</p></body></html>");
+			}
 		} catch (ItemException itemException) {
 			JOptionPane.showMessageDialog(parent, "Unable to load Items.");
 		}
