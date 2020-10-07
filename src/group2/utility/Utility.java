@@ -41,6 +41,8 @@ public class Utility {
 	 * Salts a password by appending the salt value to the end of the password
 	 */
 	private final static String saltPassword(String password) {
+//		System.out.println("password: " + password);
+//		System.out.println("salted: " + password + SALT_VALUE);
 		return password += SALT_VALUE;
 	}
 	
@@ -63,7 +65,7 @@ public class Utility {
 		}
 		
 		byte[] hashedPassword = md.digest(password.getBytes(StandardCharsets.UTF_8));
-			
+//		System.out.println("hashed: " + new String(hashedPassword, StandardCharsets.UTF_8));
 		return new String(hashedPassword, StandardCharsets.UTF_8);
 	}
 
@@ -79,11 +81,11 @@ public class Utility {
 	 */
 	public final static void isUserValid(String username, String password) throws UserException {
 		if (!isUsernameValid(username)) {
-			throw new UserException("Invalid username.");
+			throw new UserException("The username must be 1-30 alphanumeric characters.");
 		}
 		
 		if (!isPasswordValid(password)) {
-			throw new UserException("Invalid password");
+			throw new UserException("The password must be 5-255 alphanumeric/special characters.");
 		}
 	}
 	
@@ -147,7 +149,7 @@ public class Utility {
 		boolean validationOutcome = false;
 		int charCount = 0;
 
-		// ICD call for username to have 1-30 Alphanumeric characters allowed
+		// ICD call for username to have 5-255 Alphanumeric characters allowed
 		// Counts each character except space
 		for (int i = 0; i < password.length(); i++) {
 			if (password.charAt(i) != ' ')
