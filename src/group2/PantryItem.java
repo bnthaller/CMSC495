@@ -128,7 +128,7 @@ public class PantryItem  extends JDialog{
 		gbc_txtQuantity.gridy = 2;
 		pMain.add(txtQuantity, gbc_txtQuantity);
 		
-		JLabel lblExpiration = new JLabel("Expiration:");
+		JLabel lblExpiration = new JLabel("Expiration (yyyy-mm-dd):");
 		GridBagConstraints gbc_lblExpiration = new GridBagConstraints();
 		gbc_lblExpiration.anchor = GridBagConstraints.EAST;
 		gbc_lblExpiration.insets = new Insets(0, 0, 0, 5);
@@ -181,6 +181,11 @@ public class PantryItem  extends JDialog{
 	
 	private void doOK() {
 		try {
+			if(areFieldsEmpty()) {
+				JOptionPane.showMessageDialog(this, "Name, product type, quantity, and expiration fields are required.");
+				return;
+			}
+			
 			if(item == null) {
 				// try to add the item
 				itemService.createItem(txtName.getText(), Integer.parseInt(txtQuantity.getText()),
@@ -202,7 +207,14 @@ public class PantryItem  extends JDialog{
 			JOptionPane.showMessageDialog(this, ex.getMessage());
 		}
 	}
-
+	
+	private boolean areFieldsEmpty() {
+		System.out.println(txtExpirationDate.getText().equals(""));
+		System.out.println(txtName.getText().equals(""));
+		System.out.println(txtQuantity.getText().equals(""));
+		return txtExpirationDate.getText().equals("") || txtName.getText().equals("") 
+				|| txtQuantity.getText().equals("");
+	}
 	/**
 	 * 
 	 */
