@@ -186,7 +186,7 @@ public class Login extends JDialog implements ActionListener {
 	    formatter.setValueClass(Integer.class);
 	    formatter.setMinimum(0);
 	    formatter.setMaximum(Integer.MAX_VALUE);
-	    formatter.setAllowsInvalid(false);
+	    formatter.setAllowsInvalid(true);
 		txtExpiryWarning = new JFormattedTextField(formatter);
 		txtExpiryWarning.setColumns(10);
 		GridBagConstraints gbc_txtExpiryWarning = new GridBagConstraints();

@@ -136,7 +136,6 @@ public class PantryItem  extends JDialog{
 		gbc_lblExpiration.gridy = 3;
 		pMain.add(lblExpiration, gbc_lblExpiration);
 		
-		
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		txtExpirationDate = new JFormattedTextField(format);
 		GridBagConstraints gbc_txtExpirationDate = new GridBagConstraints();
@@ -158,6 +157,11 @@ public class PantryItem  extends JDialog{
 		pButtons.add(btnOK);
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+		});
 		pButtons.add(btnCancel);
 		populate(item);
 

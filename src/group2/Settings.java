@@ -133,7 +133,7 @@ public class Settings extends JDialog {
 	    formatter.setValueClass(Integer.class);
 	    formatter.setMinimum(0);
 	    formatter.setMaximum(Integer.MAX_VALUE);
-	    formatter.setAllowsInvalid(false);
+	    formatter.setAllowsInvalid(true);
 		txtExpiryLength = new JFormattedTextField(formatter);
 		GridBagConstraints gbc_txtExpiryLength = new GridBagConstraints();
 		gbc_txtExpiryLength.gridwidth = 2;
