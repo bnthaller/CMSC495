@@ -85,7 +85,7 @@ public class Utility {
 		}
 		
 		if (!isPasswordValid(password)) {
-			throw new UserException("The password must be 5-255 alphanumeric/special characters.");
+			throw new UserException("The password must be 5-255 alphanumeric and may only contain the following special characters: !@$()\\\\-`.+,]*$");
 		}
 	}
 	
