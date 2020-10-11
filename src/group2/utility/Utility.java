@@ -116,7 +116,35 @@ public class Utility {
 
 		return validationOutcome;
 	}
+	
+	// This method is to validate username character requirements from input field
+	// at login
+	public final static boolean isPantryNameValid(String name) {
+		boolean validationOutcome = false;
+		int charCount = 0;
 
+		// ICD call for username to have 1-30 Alphanumeric characters allowed
+		// Counts each character except space
+		for (int i = 0; i < name.length(); i++) {
+			if (name.charAt(i) != ' ')
+				charCount++;
+		}
+
+		if (charCount < 1 || charCount > 255) {
+			validationOutcome = false;
+		} else {
+			boolean characterCheck = alphanumericSpecialCharacterCheck(name);
+			if (characterCheck == true) {
+				validationOutcome = true;
+			} else {
+				validationOutcome = false;
+			}
+
+		}
+
+		return validationOutcome;
+	}
+	
 	// this method ensures ICD call for username to only have Alphanumeric
 	// characters allowed
 	private static boolean alphanumericCheck(String username) {
