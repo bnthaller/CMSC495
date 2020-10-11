@@ -116,7 +116,37 @@ public class Utility {
 
 		return validationOutcome;
 	}
+	
+	// This method is to validate username character requirements from input field
+	// at login
+	public final static boolean isPantryNameValid(String name) {
+		boolean validationOutcome = false;
+		int charCount = 0;
 
+		// ICD call for username to have 1-30 Alphanumeric characters allowed
+		// Counts each character except space
+		for (int i = 0; i < name.length(); i++) {
+			if (name.charAt(i) != ' ')
+				charCount++;
+		}
+
+		if (charCount < 1 || charCount > 255) {
+			System.out.println("invalid char count: " + charCount);
+			validationOutcome = false;
+		} else {
+			boolean characterCheck = alphanumericSpecialCharacterCheckSpacesAllowed(name);
+			if (characterCheck == true) {
+				validationOutcome = true;
+			} else {
+				validationOutcome = false;
+				System.out.println("invalid alphanumeric/special chars");
+			}
+
+		}
+
+		return validationOutcome;
+	}
+	
 	// this method ensures ICD call for username to only have Alphanumeric
 	// characters allowed
 	private static boolean alphanumericCheck(String username) {
@@ -196,5 +226,28 @@ public class Utility {
 
 		return validationCheck;
 	}
+	// this method is ensures CDI 5-255 alphanumeric or special characters is met
+	private static boolean alphanumericSpecialCharacterCheckSpacesAllowed(String password) {
+		// regex pattern checker will be utilized for this task
+		// List<> is utilized for iteration of username
+		boolean validationCheck = false;
 
+		// listed for non approved characters
+		final String regex = "^[a-zA-Z0-9!@$()\\-`.+, ]*$";
+		// regex
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(password);
+
+		System.out.println("after matcher " + matcher.matches());
+		// if pattern is found then we return false for found invalid character(s)
+		if (matcher.matches() == true) {
+			System.out.println("in if of matcher: " + matcher.matches());
+			validationCheck = true;//
+		} else {
+			System.out.println("in if else of matcher: " + matcher.matches());
+			validationCheck = false;
+		}
+
+		return validationCheck;
+	}
 }// end of class
