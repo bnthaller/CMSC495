@@ -17,7 +17,7 @@ public class ItemService {
     public List<Item> createItem(String name, int quantity, LocalDate expiryDate, String productType, User user) throws ItemException {
     	try {
     		if(!Utility.isPantryNameValid(name)){
-    			throw new ItemException("Item name must be 1-255 alphanumeric/special characters.");
+    			throw new ItemException("Item name must be 1-255 alpahnumeric characters and may spaces and the following special characters: !@$()\\\\\\\\\\\\\\\\-`.+,]*$");
     		}
     		
     		itemDAO.createItem(name, quantity, expiryDate, productType, user.getId());
@@ -63,7 +63,7 @@ public class ItemService {
     public List<Item> updateItemById(int itemId, String name, int quantity, String productType, LocalDate expiryDate, User user) throws ItemException {
     	try {
     		if(!Utility.isPantryNameValid(name)){
-    			throw new ItemException("Item name must be 1-255 characters.");
+    			throw new ItemException("Item name must be 1-255 alpahnumeric characters and may spaces and the following special characters: !@$()\\\\\\\\-`.+,]*$");
     		}
     		itemDAO.updateItemById(itemId, name, quantity, productType, expiryDate);
     		return getItems(user);
