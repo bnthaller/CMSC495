@@ -153,6 +153,8 @@ public class Settings extends JDialog {
 							txtFirstName.getText(), txtLastName.getText(), 
 							String.copyValueOf(txtNewPassword.getPassword()), 
 							Integer.parseInt(txtExpiryLength.getText()));
+					
+					userService.verifyUser(currentUser.getUsername(), String.copyValueOf(txtNewPassword.getPassword()));
 					dispose();
 				}
 				catch (UserException ex) { 

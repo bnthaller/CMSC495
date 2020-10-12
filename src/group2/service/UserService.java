@@ -13,9 +13,9 @@ public class UserService {
     public static User currentUser = null;
     
     public UserService() {
-    	currentUser = null;
+//    	currentUser = null;
     }
-    
+
     /**
      * 
      * @param username

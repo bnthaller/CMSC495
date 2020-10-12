@@ -336,6 +336,8 @@ public class TopShelfGui extends JDialog implements ActionListener  {
 			s.setExpiryLength(UserService.currentUser.getExpiryLength());
 			s.setPassword(dlg.getPassword());
 			s.setVisible(true);
+			
+			refreshData(filterValue);
 		}
 	}
 	

@@ -63,7 +63,7 @@ public class Password extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				// validate the current user/password
 				UserService userService = new UserService();
-
+			
 				try {
 					userService.verifyUser(currentUser.getUsername(), String.copyValueOf(passwordField.getPassword()));
 					isPasswordValidated = true;
