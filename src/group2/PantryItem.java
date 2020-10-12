@@ -35,11 +35,6 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 
 public class PantryItem  extends JDialog{
-//	public enum Mode {
-//		ADD,
-//		UPDATE
-//	}
-//	private Mode mode = Mode.ADD;
 	JButton btnOK;
 	private Item item = null;
 	private ItemService itemService = new ItemService();
@@ -177,6 +172,7 @@ public class PantryItem  extends JDialog{
 		txtName.setText(item.getName());
 		txtQuantity.setText(Integer.toString(item.getQuantity()));
 		txtExpirationDate.setText(item.getExpiryDate().toString());
+		cbProductType.setSelectedItem(item.getProductType());
 	}
 	
 	private void doOK() {
